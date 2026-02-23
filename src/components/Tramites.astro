@@ -11,6 +11,7 @@ const tramites = [
     title: "Referencia de Pago",
     description:
       "Genera y descarga tu formato de pago para trámites escolares.",
+    href: "/pagos-mensuales/paso-1",
   },
   {
     icon: "health_and_safety",
@@ -44,7 +45,7 @@ const tramites = [
       tramites.map((tramite) => (
         <a
           class="bg-white p-8 border border-gray-100 shadow-lg flex flex-col items-center text-center group hover:border-secondary transition-colors"
-          href="#"
+          href={tramite.href || "#"}
         >
           <div class="w-16 h-16 rounded-full border-2 border-secondary flex items-center justify-center text-secondary mb-4">
             <i class="material-icons text-3xl">{tramite.icon}</i>
