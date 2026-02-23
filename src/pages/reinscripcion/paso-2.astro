@@ -1,0 +1,216 @@
+---
+import ReinscripcionLayout from "../../layouts/ReinscripcionLayout.astro";
+import Stepper from "../../components/Stepper.astro";
+
+const materias = [
+  {
+    codigo: "MAT102",
+    nombre: "Cálculo Integral",
+    requisito: "Cálculo Diferencial",
+    creditos: 8,
+    grupo: "A-101 • 07:00 - 09:00",
+    seleccionada: true,
+  },
+  {
+    codigo: "PROG201",
+    nombre: "Programación Orientada a Objetos",
+    requisito: "Intro. a la Programación",
+    creditos: 10,
+    grupo: "B-202 • 09:00 - 11:00",
+    seleccionada: true,
+  },
+  {
+    codigo: "FIS301",
+    nombre: "Física Mecánica",
+    requisito: "N/A",
+    creditos: 8,
+    grupo: "C-103 • 11:00 - 13:00",
+    seleccionada: true,
+  },
+  {
+    codigo: "BD402",
+    nombre: "Bases de Datos Relacionales",
+    requisito: "Estructura de Datos",
+    creditos: 9,
+    grupo: "A-101 • 14:00 - 16:00",
+    seleccionada: false,
+  },
+  {
+    codigo: "ING501",
+    nombre: "Inglés Técnico",
+    requisito: "Inglés IV",
+    creditos: 4,
+    grupo: "D-404 • 16:00 - 18:00",
+    seleccionada: false,
+  },
+];
+---
+
+<ReinscripcionLayout title="Portal de Reinscripción - Paso 2">
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+    <Stepper currentStep={2} />
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Main Content -->
+      <div class="lg:col-span-3 space-y-6">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800 dark:text-white">
+            Paso 2: Selección de Carga Académica
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 mt-1">
+            Selecciona las materias que cursarás en este periodo. Verifica que
+            el total de créditos esté dentro de los límites permitidos.
+          </p>
+        </div>
+
+        <!-- Alert Banner -->
+        <div
+          class="bg-primary/10 dark:bg-primary/20 border-l-4 border-primary p-4 rounded-r-lg flex gap-3 items-start"
+        >
+          <span class="material-symbols-outlined text-primary">info</span>
+          <div>
+            <p class="text-sm font-bold text-primary">Información Importante</p>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+              Mínimo de créditos requerido: 32. Máximo: 56. Actualmente has
+              seleccionado 26 créditos.
+            </p>
+          </div>
+        </div>
+
+        <!-- Subject Table -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden overflow-x-auto"
+        >
+          <table class="w-full border-collapse text-left min-w-[640px]">
+            <thead>
+              <tr
+                class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700"
+              >
+                <th
+                  class="px-6 py-4 font-bold text-[10px] uppercase tracking-widest text-slate-500"
+                  >Sel.</th
+                >
+                <th
+                  class="px-6 py-4 font-bold text-[10px] uppercase tracking-widest text-slate-500"
+                  >Código</th
+                >
+                <th
+                  class="px-6 py-4 font-bold text-[10px] uppercase tracking-widest text-slate-500"
+                  >Materia</th
+                >
+                <th
+                  class="px-6 py-4 font-bold text-[10px] uppercase tracking-widest text-slate-500"
+                  >Créditos</th
+                >
+                <th
+                  class="px-6 py-4 font-bold text-[10px] uppercase tracking-widest text-slate-500"
+                  >Grupo / Horario</th
+                >
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              {
+                materias.map((materia) => (
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-4">
+                      <input
+                        checked={materia.seleccionada}
+                        class="rounded border-slate-300 text-primary focus:ring-primary h-5 w-5 cursor-pointer"
+                        type="checkbox"
+                      />
+                    </td>
+                    <td class="px-6 py-4 font-mono text-sm">
+                      {materia.codigo}
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="font-medium">{materia.nombre}</div>
+                      <div class="text-xs text-slate-500">
+                        Requisito: {materia.requisito}
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 text-center font-semibold">
+                      {materia.creditos}
+                    </td>
+                    <td class="px-6 py-4">
+                      <span
+                        class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                          materia.seleccionada
+                            ? "bg-primary/10 text-primary"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                        }`}
+                      >
+                        {materia.grupo}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Summary Sidebar -->
+      <div class="lg:col-span-1">
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sticky top-28"
+        >
+          <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary"
+              >assessment</span
+            >
+            Resumen de Carga
+          </h3>
+          <div class="space-y-4">
+            <div
+              class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800"
+            >
+              <span class="text-slate-500 text-sm">Materias seleccionadas:</span
+              >
+              <span class="font-bold">3</span>
+            </div>
+            <div
+              class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800"
+            >
+              <span class="text-slate-500 text-sm">Total de créditos:</span>
+              <span class="font-bold text-primary text-xl">26</span>
+            </div>
+            <div class="pt-4 space-y-2">
+              <p
+                class="text-[10px] text-slate-400 uppercase font-bold tracking-widest"
+              >
+                Estado de validación
+              </p>
+              <div
+                class="flex items-center gap-2 text-rose-500 font-medium text-sm"
+              >
+                <span class="material-symbols-outlined text-sm">error</span>
+                Créditos insuficientes (min. 32)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div
+      class="flex flex-col md:flex-row items-center justify-between gap-6 mt-8 pt-8 border-t border-slate-200 dark:border-slate-700"
+    >
+      <a
+        href="/reinscripcion/paso-1"
+        class="flex items-center gap-2 px-6 py-2.5 rounded-lg border-2 border-slate-200 dark:border-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      >
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        Anterior
+      </a>
+      <a
+        href="/reinscripcion/paso-3"
+        class="flex items-center gap-2 px-8 py-2.5 rounded-lg bg-primary text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all"
+      >
+        Generar Referencia de Pago
+        <span class="material-symbols-outlined text-sm">receipt_long</span>
+      </a>
+    </div>
+  </main>
+</ReinscripcionLayout>
