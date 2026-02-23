@@ -1,0 +1,241 @@
+---
+import NuevoIngresoLayout from "../../layouts/NuevoIngresoLayout.astro";
+import StepperNuevoIngreso from "../../components/StepperNuevoIngreso.astro";
+---
+
+<NuevoIngresoLayout title="UTSH - Selección de Carrera">
+  <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <div class="flex items-center justify-center gap-4 mb-2">
+          <div class="h-[2px] flex-1 bg-primary/30 max-w-[100px]"></div>
+          <h2
+            class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white uppercase tracking-wider"
+          >
+            Formulario de Inscripción
+          </h2>
+          <div class="h-[2px] flex-1 bg-primary/30 max-w-[100px]"></div>
+        </div>
+        <p
+          class="text-secondary font-semibold text-sm tracking-widest uppercase"
+        >
+          Nuevo Ingreso 2026
+        </p>
+      </div>
+
+      <StepperNuevoIngreso currentStep={3} />
+
+      <!-- Form Card -->
+      <div
+        class="bg-white dark:bg-[#2d2d2d] rounded-xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800"
+      >
+        <div
+          class="bg-slate-50 dark:bg-black/20 px-8 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3"
+        >
+          <span class="material-symbols-outlined text-primary">psychology</span>
+          <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
+            3. Selección de Carrera
+          </h3>
+        </div>
+
+        <form class="p-8">
+          <div class="grid grid-cols-1 gap-6">
+            <!-- Nivel Académico -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex justify-between"
+                for="nivel"
+              >
+                Nivel Académico <span
+                  class="text-secondary text-[10px] uppercase font-bold"
+                  >* Requerido</span
+                >
+              </label>
+              <select
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="nivel"
+              >
+                <option disabled selected value=""
+                  >Seleccione el nivel académico</option
+                >
+                <option value="TSU">Técnico Superior Universitario (TSU)</option
+                >
+                <option value="ING">Ingeniería</option>
+                <option value="LIC">Licenciatura</option>
+              </select>
+              <p class="mt-1 text-[10px] text-slate-500 italic">
+                La UTSH ofrece programas educativos en modalidad TSU (2 años) e
+                Ingeniería/Licenciatura (4 años).
+              </p>
+            </div>
+
+            <!-- Programa Educativo -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex justify-between"
+                for="programa"
+              >
+                Programa Educativo <span
+                  class="text-secondary text-[10px] uppercase font-bold"
+                  >* Requerido</span
+                >
+              </label>
+              <select
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="programa"
+              >
+                <option disabled selected value=""
+                  >Seleccione un programa educativo</option
+                >
+                <optgroup label="Técnico Superior Universitario (TSU)">
+                  <option value="TSU-TIC"
+                    >TSU en Tecnologías de la Información</option
+                  >
+                  <option value="TSU-ADMIN"
+                    >TSU en Desarrollo de Negocios</option
+                  >
+                  <option value="TSU-IND">TSU en Mecatrónica</option>
+                  <option value="TSU-GASTRO">TSU en Gastronomía</option>
+                </optgroup>
+                <optgroup label="Ingeniería">
+                  <option value="ING-TIC"
+                    >Ingeniería en Tecnologías de la Información</option
+                  >
+                  <option value="ING-SOFT"
+                    >Ingeniería en Desarrollo de Software</option
+                  >
+                  <option value="ING-MECA">Ingeniería en Mecatrónica</option>
+                  <option value="ING-IND">Ingeniería Industrial</option>
+                </optgroup>
+                <optgroup label="Licenciatura">
+                  <option value="LIC-ADMIN"
+                    >Licenciatura en Gestión Empresarial</option
+                  >
+                  <option value="LIC-GASTRO">Licenciatura en Gastronomía</option
+                  >
+                  <option value="LIC-TURISMO">Licenciatura en Turismo</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Motivación -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="motivacion"
+              >
+                ¿Por qué quieres estudiar este programa en la UTSH?
+              </label>
+              <textarea
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="motivacion"
+                rows="5"
+                placeholder="Compártenos brevemente tus motivaciones, metas y por qué elegiste la UTSH (mínimo 50 caracteres)"
+              ></textarea>
+              <p class="mt-1 text-[10px] text-slate-500 italic">
+                Tu respuesta nos ayuda a conocerte mejor y ofrecerte una
+                experiencia educativa personalizada.
+              </p>
+            </div>
+          </div>
+
+          <!-- Excellence Badge Section -->
+          <div
+            class="mt-8 bg-gradient-to-r from-accent/5 to-primary/5 rounded-xl p-6 border-2 border-dashed border-accent/30"
+          >
+            <div class="flex items-start gap-4">
+              <div class="shrink-0">
+                <span class="material-symbols-outlined text-5xl text-accent"
+                  >military_tech</span
+                >
+              </div>
+              <div>
+                <h4
+                  class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2"
+                >
+                  🌟 Compromiso de Excelencia
+                </h4>
+                <p
+                  class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed"
+                >
+                  En la UTSH buscamos estudiantes comprometidos con su formación
+                  académica y profesional. Nuestros programas están diseñados
+                  para desarrollar competencias técnicas, habilidades
+                  socioemocionales y valores éticos.
+                </p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span
+                    class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
+                    >✓ Vinculación Empresarial</span
+                  >
+                  <span
+                    class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
+                    >✓ Prácticas Profesionales</span
+                  >
+                  <span
+                    class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
+                    >✓ Certificaciones</span
+                  >
+                  <span
+                    class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
+                    >✓ Movilidad Internacional</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert -->
+          <div
+            class="mt-8 p-4 bg-secondary/10 border-l-4 border-secondary rounded-r-lg"
+          >
+            <div class="flex gap-3">
+              <span class="material-symbols-outlined text-secondary">info</span>
+              <p
+                class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed"
+              >
+                <span class="font-bold text-secondary">Recuerda:</span> Una vez confirmada
+                tu inscripción, podrás realizar cambio de carrera únicamente durante
+                las primeras dos semanas del cuatrimestre, sujeto a disponibilidad.
+              </p>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div
+            class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between gap-4"
+          >
+            <a
+              href="/nuevo-ingreso/paso-2"
+              class="order-2 sm:order-1 px-8 py-3 rounded-lg border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-base">arrow_back</span
+              >
+              Regresar
+            </a>
+            <a
+              href="/nuevo-ingreso/paso-4"
+              class="order-1 sm:order-2 px-10 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"
+            >
+              Continuar
+              <span class="material-symbols-outlined text-base"
+                >arrow_forward</span
+              >
+            </a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Help -->
+      <div class="mt-8 text-center">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          ¿Necesitas conocer más sobre nuestros programas?
+          <a class="text-primary font-bold hover:underline ml-1" href="#"
+            >Ver Oferta Educativa</a
+          >
+        </p>
+      </div>
+    </div>
+  </main>
+</NuevoIngresoLayout>

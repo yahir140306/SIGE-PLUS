@@ -1,0 +1,412 @@
+---
+import NuevoIngresoLayout from "../../layouts/NuevoIngresoLayout.astro";
+import StepperNuevoIngreso from "../../components/StepperNuevoIngreso.astro";
+---
+
+<NuevoIngresoLayout title="UTSH - Carga de Documentación">
+  <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <div class="flex items-center justify-center gap-4 mb-2">
+          <div class="h-[2px] flex-1 bg-primary/30 max-w-[100px]"></div>
+          <h2
+            class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white uppercase tracking-wider"
+          >
+            Formulario de Inscripción
+          </h2>
+          <div class="h-[2px] flex-1 bg-primary/30 max-w-[100px]"></div>
+        </div>
+        <p
+          class="text-secondary font-semibold text-sm tracking-widest uppercase"
+        >
+          Nuevo Ingreso 2026
+        </p>
+      </div>
+
+      <StepperNuevoIngreso currentStep={4} />
+
+      <!-- Form Card -->
+      <div
+        class="bg-white dark:bg-[#2d2d2d] rounded-xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800"
+      >
+        <div
+          class="bg-slate-50 dark:bg-black/20 px-8 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3"
+        >
+          <span class="material-symbols-outlined text-primary">folder_open</span
+          >
+          <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
+            4. Carga de Documentación
+          </h3>
+        </div>
+
+        <div class="p-8">
+          <!-- Instructions Alert -->
+          <div
+            class="mb-8 p-4 bg-primary/10 border-l-4 border-primary rounded-r-lg"
+          >
+            <div class="flex gap-3">
+              <span class="material-symbols-outlined text-primary"
+                >description</span
+              >
+              <div class="flex-1">
+                <p
+                  class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed mb-2"
+                >
+                  <span class="font-bold text-primary"
+                    >Requisitos de los archivos:</span
+                  >
+                </p>
+                <ul
+                  class="text-[10px] text-slate-600 dark:text-slate-400 space-y-1 ml-4 list-disc"
+                >
+                  <li>
+                    Formato permitido: <span class="font-bold"
+                      >PDF o JPG/JPEG</span>
+                  </li>
+                  <li>
+                    Tamaño máximo: <span class="font-bold"
+                      >5 MB por archivo</span>
+                  </li>
+                  <li>
+                    Los documentos deben ser <span class="font-bold"
+                      >legibles y completos</span>
+                  </li>
+                  <li>
+                    No se permiten documentos editables (Word, Excel, etc.)
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Documents Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Document Card 1: Acta de Nacimiento -->
+            <div
+              class="border-2 border-slate-200 dark:border-slate-700 rounded-xl p-6 hover:border-primary/50 transition-all"
+            >
+              <div class="flex items-start gap-4">
+                <div
+                  class="shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center"
+                >
+                  <span class="material-symbols-outlined text-2xl text-primary"
+                    >assignment_ind</span
+                  >
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4
+                    class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1"
+                  >
+                    Acta de Nacimiento
+                  </h4>
+                  <p
+                    class="text-[10px] text-slate-500 dark:text-slate-400 mb-3"
+                  >
+                    Certificada y vigente (no mayor a 6 meses)
+                  </p>
+
+                  <div class="mb-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-[9px] font-bold rounded-full"
+                    >
+                      <span class="material-symbols-outlined text-[12px]"
+                        >pending</span
+                      >
+                      PENDIENTE
+                    </span>
+                  </div>
+
+                  <label class="block">
+                    <input
+                      type="file"
+                      class="hidden"
+                      accept=".pdf,.jpg,.jpeg"
+                    />
+                    <div
+                      class="cursor-pointer px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 transition-all text-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-sm text-slate-600 dark:text-slate-400"
+                        >upload_file</span
+                      >
+                      <span
+                        class="block text-[10px] font-semibold text-slate-600 dark:text-slate-400 mt-1"
+                        >Seleccionar archivo</span
+                      >
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Card 2: CURP -->
+            <div
+              class="border-2 border-slate-200 dark:border-slate-700 rounded-xl p-6 hover:border-primary/50 transition-all"
+            >
+              <div class="flex items-start gap-4">
+                <div
+                  class="shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center"
+                >
+                  <span class="material-symbols-outlined text-2xl text-primary"
+                    >badge</span
+                  >
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4
+                    class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1"
+                  >
+                    CURP Oficial
+                  </h4>
+                  <p
+                    class="text-[10px] text-slate-500 dark:text-slate-400 mb-3"
+                  >
+                    Documento oficial emitido por RENAPO
+                  </p>
+
+                  <div class="mb-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-[9px] font-bold rounded-full"
+                    >
+                      <span class="material-symbols-outlined text-[12px]"
+                        >pending</span
+                      >
+                      PENDIENTE
+                    </span>
+                  </div>
+
+                  <label class="block">
+                    <input
+                      type="file"
+                      class="hidden"
+                      accept=".pdf,.jpg,.jpeg"
+                    />
+                    <div
+                      class="cursor-pointer px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 transition-all text-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-sm text-slate-600 dark:text-slate-400"
+                        >upload_file</span
+                      >
+                      <span
+                        class="block text-[10px] font-semibold text-slate-600 dark:text-slate-400 mt-1"
+                        >Seleccionar archivo</span
+                      >
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Card 3: Certificado -->
+            <div
+              class="border-2 border-slate-200 dark:border-slate-700 rounded-xl p-6 hover:border-primary/50 transition-all"
+            >
+              <div class="flex items-start gap-4">
+                <div
+                  class="shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center"
+                >
+                  <span class="material-symbols-outlined text-2xl text-primary"
+                    >school</span
+                  >
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4
+                    class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1"
+                  >
+                    Certificado de Bachillerato
+                  </h4>
+                  <p
+                    class="text-[10px] text-slate-500 dark:text-slate-400 mb-3"
+                  >
+                    Original o copia certificada con sello
+                  </p>
+
+                  <div class="mb-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-[9px] font-bold rounded-full"
+                    >
+                      <span class="material-symbols-outlined text-[12px]"
+                        >pending</span
+                      >
+                      PENDIENTE
+                    </span>
+                  </div>
+
+                  <label class="block">
+                    <input
+                      type="file"
+                      class="hidden"
+                      accept=".pdf,.jpg,.jpeg"
+                    />
+                    <div
+                      class="cursor-pointer px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 transition-all text-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-sm text-slate-600 dark:text-slate-400"
+                        >upload_file</span
+                      >
+                      <span
+                        class="block text-[10px] font-semibold text-slate-600 dark:text-slate-400 mt-1"
+                        >Seleccionar archivo</span
+                      >
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Card 4: Comprobante -->
+            <div
+              class="border-2 border-slate-200 dark:border-slate-700 rounded-xl p-6 hover:border-primary/50 transition-all"
+            >
+              <div class="flex items-start gap-4">
+                <div
+                  class="shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center"
+                >
+                  <span class="material-symbols-outlined text-2xl text-primary"
+                    >home</span
+                  >
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4
+                    class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1"
+                  >
+                    Comprobante de Domicilio
+                  </h4>
+                  <p
+                    class="text-[10px] text-slate-500 dark:text-slate-400 mb-3"
+                  >
+                    No mayor a 3 meses (luz, agua, teléfono)
+                  </p>
+
+                  <div class="mb-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-[9px] font-bold rounded-full"
+                    >
+                      <span class="material-symbols-outlined text-[12px]"
+                        >pending</span
+                      >
+                      PENDIENTE
+                    </span>
+                  </div>
+
+                  <label class="block">
+                    <input
+                      type="file"
+                      class="hidden"
+                      accept=".pdf,.jpg,.jpeg"
+                    />
+                    <div
+                      class="cursor-pointer px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 transition-all text-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-sm text-slate-600 dark:text-slate-400"
+                        >upload_file</span
+                      >
+                      <span
+                        class="block text-[10px] font-semibold text-slate-600 dark:text-slate-400 mt-1"
+                        >Seleccionar archivo</span
+                      >
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Important Note -->
+          <div
+            class="mt-8 p-4 bg-secondary/10 border-l-4 border-secondary rounded-r-lg"
+          >
+            <div class="flex gap-3">
+              <span class="material-symbols-outlined text-secondary"
+                >warning</span
+              >
+              <p
+                class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed"
+              >
+                <span class="font-bold text-secondary">Importante:</span> No es necesario
+                cargar todos los documentos en este momento. Puedes continuar con
+                tu registro y subirlos más tarde desde tu portal de aspirante. Sin
+                embargo,
+                <span class="font-bold"
+                  >la documentación completa es requisito para tu inscripción
+                  definitiva.</span
+                >
+              </p>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div
+            class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between gap-4"
+          >
+            <a
+              href="/nuevo-ingreso/paso-3"
+              class="order-2 sm:order-1 px-8 py-3 rounded-lg border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-base">arrow_back</span
+              >
+              Regresar
+            </a>
+            <button
+              type="button"
+              class="order-1 sm:order-2 px-10 py-3 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-white font-bold hover:shadow-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-base"
+                >check_circle</span
+              >
+              Finalizar Registro
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Preview (Hidden by default, show after submission) -->
+      <div class="mt-8 hidden" id="success-message">
+        <div
+          class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl p-6 border-2 border-primary/30"
+        >
+          <div class="text-center">
+            <span
+              class="material-symbols-outlined text-6xl text-primary mb-4 inline-block"
+              >verified</span
+            >
+            <h3
+              class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2"
+            >
+              ¡Registro Completado Exitosamente!
+            </h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Tu folio de registro es: <span
+                class="font-bold text-primary text-lg">UTSH-2026-NI-00123</span
+              >
+            </p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">
+              Recibirás un correo electrónico con los detalles de tu proceso de
+              admisión y las siguientes instrucciones.
+            </p>
+            <a
+              href="/"
+              class="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-all"
+            >
+              <span class="material-symbols-outlined text-base">home</span>
+              Volver al Inicio
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <div class="mt-8 text-center">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          ¿Problemas para cargar archivos?
+          <a class="text-primary font-bold hover:underline ml-1" href="#"
+            >Contacta a Soporte Técnico</a
+          >
+        </p>
+      </div>
+    </div>
+  </main>
+</NuevoIngresoLayout>

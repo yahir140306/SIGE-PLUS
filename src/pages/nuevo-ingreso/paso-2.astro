@@ -1,0 +1,271 @@
+---
+import NuevoIngresoLayout from "../../layouts/NuevoIngresoLayout.astro";
+import StepperNuevoIngreso from "../../components/StepperNuevoIngreso.astro";
+---
+
+<NuevoIngresoLayout title="UTSH - Antecedentes Académicos">
+  <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <div class="flex items-center justify-center gap-4 mb-2">
+          <div class="h-[2px] flex-1 bg-primary/30 max-w-[100px]"></div>
+          <h2
+            class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white uppercase tracking-wider"
+          >
+            Formulario de Inscripción
+          </h2>
+          <div class="h-[2px] flex-1 bg-primary/30 max-w-[100px]"></div>
+        </div>
+        <p
+          class="text-secondary font-semibold text-sm tracking-widest uppercase"
+        >
+          Nuevo Ingreso 2026
+        </p>
+      </div>
+
+      <StepperNuevoIngreso currentStep={2} />
+
+      <!-- Form Card -->
+      <div
+        class="bg-white dark:bg-[#2d2d2d] rounded-xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800"
+      >
+        <div
+          class="bg-slate-50 dark:bg-black/20 px-8 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3"
+        >
+          <span class="material-symbols-outlined text-primary">school</span>
+          <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
+            2. Antecedentes Académicos
+          </h3>
+        </div>
+
+        <form class="p-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Escuela de Procedencia -->
+            <div class="md:col-span-2">
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex justify-between"
+                for="escuela"
+              >
+                Escuela de Procedencia <span
+                  class="text-secondary text-[10px] uppercase font-bold"
+                  >* Requerido</span
+                >
+              </label>
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"
+                >
+                  <span class="material-symbols-outlined text-sm">search</span>
+                </span>
+                <input
+                  class="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  id="escuela"
+                  placeholder="Nombre completo de la institución"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <!-- Estado -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="estado"
+              >
+                Estado
+              </label>
+              <select
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="estado"
+              >
+                <option disabled value="">Seleccione un estado</option>
+                <option value="Aguascalientes">Aguascalientes</option>
+                <option value="Baja California">Baja California</option>
+                <option value="Baja California Sur">Baja California Sur</option>
+                <option value="Campeche">Campeche</option>
+                <option value="Chiapas">Chiapas</option>
+                <option value="Chihuahua">Chihuahua</option>
+                <option value="Ciudad de México">Ciudad de México</option>
+                <option value="Coahuila">Coahuila</option>
+                <option value="Colima">Colima</option>
+                <option value="Durango">Durango</option>
+                <option value="Guanajuato">Guanajuato</option>
+                <option value="Guerrero">Guerrero</option>
+                <option selected value="Hidalgo">Hidalgo</option>
+                <option value="Jalisco">Jalisco</option>
+                <option value="México">Estado de México</option>
+                <option value="Michoacán">Michoacán</option>
+                <option value="Morelos">Morelos</option>
+                <option value="Nayarit">Nayarit</option>
+                <option value="Nuevo León">Nuevo León</option>
+                <option value="Oaxaca">Oaxaca</option>
+                <option value="Puebla">Puebla</option>
+                <option value="Querétaro">Querétaro</option>
+                <option value="Quintana Roo">Quintana Roo</option>
+                <option value="San Luis Potosí">San Luis Potosí</option>
+                <option value="Sinaloa">Sinaloa</option>
+                <option value="Sonora">Sonora</option>
+                <option value="Tabasco">Tabasco</option>
+                <option value="Tamaulipas">Tamaulipas</option>
+                <option value="Tlaxcala">Tlaxcala</option>
+                <option value="Veracruz">Veracruz</option>
+                <option value="Yucatán">Yucatán</option>
+                <option value="Zacatecas">Zacatecas</option>
+              </select>
+            </div>
+
+            <!-- Fecha Graduación -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="fecha_grad"
+              >
+                Fecha de Graduación
+              </label>
+              <input
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="fecha_grad"
+                type="date"
+              />
+            </div>
+
+            <!-- Promedio -->
+            <div class="md:col-span-2">
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="promedio"
+              >
+                Promedio General
+              </label>
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"
+                >
+                  <span class="material-symbols-outlined text-sm">grade</span>
+                </span>
+                <input
+                  class="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  id="promedio"
+                  placeholder="Escala del 6.0 al 10.0"
+                  type="number"
+                  step="0.1"
+                  min="6.0"
+                  max="10.0"
+                />
+              </div>
+              <p class="mt-1 text-[10px] text-slate-500 italic">
+                Ingrese su promedio en la escala de 6.0 a 10.0
+              </p>
+            </div>
+
+            <!-- Estado del Certificado -->
+            <div class="md:col-span-2">
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3"
+              >
+                ¿Ya cuenta con su certificado de bachillerato en físico?
+              </label>
+              <div class="space-y-3">
+                <label
+                  class="flex items-center p-3 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-all"
+                >
+                  <input
+                    class="w-4 h-4 text-primary focus:ring-primary"
+                    name="certificado"
+                    type="radio"
+                    value="si"
+                  />
+                  <span
+                    class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300"
+                    >Sí, ya lo tengo</span
+                  >
+                </label>
+                <label
+                  class="flex items-center p-3 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-all"
+                >
+                  <input
+                    class="w-4 h-4 text-primary focus:ring-primary"
+                    name="certificado"
+                    type="radio"
+                    value="tramite"
+                  />
+                  <span
+                    class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300"
+                    >Aún está en trámite</span
+                  >
+                </label>
+                <label
+                  class="flex items-center p-3 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-all"
+                >
+                  <input
+                    class="w-4 h-4 text-primary focus:ring-primary"
+                    name="certificado"
+                    type="radio"
+                    value="no"
+                  />
+                  <span
+                    class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300"
+                    >No, aún no lo solicito</span
+                  >
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert -->
+          <div
+            class="mt-8 p-4 bg-accent/10 border-l-4 border-accent rounded-r-lg"
+          >
+            <div class="flex gap-3">
+              <span class="material-symbols-outlined text-accent">info</span>
+              <p
+                class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed"
+              >
+                <span class="font-bold text-accent">Importante:</span> Aunque su certificado
+                esté en trámite puede continuar con el proceso de admisión. Sin embargo,
+                <span class="font-bold"
+                  >la entrega del certificado es indispensable para su
+                  inscripción definitiva.</span
+                >
+              </p>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div
+            class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between gap-4"
+          >
+            <a
+              href="/nuevo-ingreso/paso-1"
+              class="order-2 sm:order-1 px-8 py-3 rounded-lg border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-base">arrow_back</span
+              >
+              Regresar
+            </a>
+            <a
+              href="/nuevo-ingreso/paso-3"
+              class="order-1 sm:order-2 px-10 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"
+            >
+              Continuar
+              <span class="material-symbols-outlined text-base"
+                >arrow_forward</span
+              >
+            </a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Help -->
+      <div class="mt-8 text-center">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          ¿Tienes dudas con tu proceso?
+          <a class="text-primary font-bold hover:underline ml-1" href="#"
+            >Contacta a Soporte Técnico</a
+          >
+        </p>
+      </div>
+    </div>
+  </main>
+</NuevoIngresoLayout>

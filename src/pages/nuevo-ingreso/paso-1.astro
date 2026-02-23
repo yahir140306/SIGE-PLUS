@@ -1,0 +1,242 @@
+---
+import NuevoIngresoLayout from "../../layouts/NuevoIngresoLayout.astro";
+import StepperNuevoIngreso from "../../components/StepperNuevoIngreso.astro";
+---
+
+<NuevoIngresoLayout title="UTSH - Inscripción Nuevo Ingreso">
+  <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+      <!-- Section Header -->
+      <div class="text-center mb-10">
+        <div class="flex items-center justify-center gap-4 mb-2">
+          <div class="h-[2px] flex-1 bg-primary/30 max-w-[100px]"></div>
+          <h2
+            class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white uppercase tracking-wider"
+          >
+            Formulario de Inscripción
+          </h2>
+          <div class="h-[2px] flex-1 bg-primary/30 max-w-[100px]"></div>
+        </div>
+        <p
+          class="text-secondary font-semibold text-sm tracking-widest uppercase"
+        >
+          Nuevo Ingreso 2026
+        </p>
+      </div>
+
+      <StepperNuevoIngreso currentStep={1} />
+
+      <!-- Form Card -->
+      <div
+        class="bg-white dark:bg-[#2d2d2d] rounded-xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800"
+      >
+        <div
+          class="bg-slate-50 dark:bg-black/20 px-8 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3"
+        >
+          <span class="material-symbols-outlined text-primary"
+            >person_outline</span
+          >
+          <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
+            1. Información del Aspirante
+          </h3>
+        </div>
+
+        <form class="p-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- CURP -->
+            <div class="md:col-span-2">
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex justify-between"
+                for="curp"
+              >
+                CURP <span
+                  class="text-secondary text-[10px] uppercase font-bold"
+                  >* Requerido</span
+                >
+              </label>
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"
+                >
+                  <span class="material-symbols-outlined text-sm">badge</span>
+                </span>
+                <input
+                  class="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all uppercase placeholder:normal-case"
+                  id="curp"
+                  placeholder="Ingrese su CURP (18 caracteres)"
+                  type="text"
+                />
+              </div>
+              <p class="mt-1 text-[10px] text-slate-500 italic">
+                ¿No conoces tu CURP? <a
+                  class="text-primary hover:underline"
+                  href="#">Consúltala aquí</a
+                >
+              </p>
+            </div>
+
+            <!-- Nombre Completo -->
+            <div class="md:col-span-2">
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="nombre"
+              >
+                Nombre completo (Como aparece en acta de nacimiento)
+              </label>
+              <input
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="nombre"
+                type="text"
+              />
+            </div>
+
+            <!-- Fecha Nacimiento -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="fecha_nac"
+              >
+                Fecha de Nacimiento
+              </label>
+              <input
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="fecha_nac"
+                type="date"
+              />
+            </div>
+
+            <!-- Género -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="genero"
+              >
+                Género
+              </label>
+              <select
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="genero"
+              >
+                <option disabled selected value="">Seleccione una opción</option
+                >
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+                <option value="O">Otro</option>
+                <option value="N">Prefiero no decir</option>
+              </select>
+            </div>
+
+            <!-- Dirección -->
+            <div class="md:col-span-2">
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="direccion"
+              >
+                Dirección Completa (Calle, No., Colonia, C.P.)
+              </label>
+              <textarea
+                class="block w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                id="direccion"
+                rows="2"></textarea>
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="telefono"
+              >
+                Teléfono de Contacto
+              </label>
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"
+                >
+                  <span class="material-symbols-outlined text-sm">call</span>
+                </span>
+                <input
+                  class="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  id="telefono"
+                  placeholder="10 dígitos"
+                  type="tel"
+                />
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                for="email"
+              >
+                Correo Electrónico
+              </label>
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"
+                >
+                  <span class="material-symbols-outlined text-sm">mail</span>
+                </span>
+                <input
+                  class="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  id="email"
+                  placeholder="ejemplo@correo.com"
+                  type="email"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert / Secondary Element -->
+          <div
+            class="mt-8 p-4 bg-secondary/10 border-l-4 border-secondary rounded-r-lg"
+          >
+            <div class="flex gap-3">
+              <span class="material-symbols-outlined text-secondary">info</span>
+              <p
+                class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed"
+              >
+                <span class="font-bold text-secondary">Nota:</span> Asegúrese de que
+                su correo electrónico sea válido y tenga acceso a él, ya que recibirá
+                sus folios y avisos de admisión por este medio.
+              </p>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div
+            class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between gap-4"
+          >
+            <a
+              href="/"
+              class="order-2 sm:order-1 px-8 py-3 rounded-lg border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-base">arrow_back</span
+              >
+              Regresar
+            </a>
+            <a
+              href="/nuevo-ingreso/paso-2"
+              class="order-1 sm:order-2 px-10 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"
+            >
+              Continuar
+              <span class="material-symbols-outlined text-base"
+                >arrow_forward</span
+              >
+            </a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Help Support -->
+      <div class="mt-8 text-center">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          ¿Tienes dudas con tu proceso?
+          <a class="text-primary font-bold hover:underline ml-1" href="#"
+            >Contacta a Soporte Técnico</a
+          >
+        </p>
+      </div>
+    </div>
+  </main>
+</NuevoIngresoLayout>
