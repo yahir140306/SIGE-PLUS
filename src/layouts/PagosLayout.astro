@@ -1,0 +1,180 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html class="light" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>{title}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Public Sans", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col"
+  >
+    <!-- Institutional Header -->
+    <header class="w-full bg-white">
+      <div class="bg-primary py-2 px-6">
+        <div
+          class="max-w-7xl mx-auto flex justify-end gap-6 text-[10px] font-bold text-white uppercase tracking-wider"
+        >
+          <a href="/" class="hover:text-accent transition-colors">Inicio</a>
+          <a href="#" class="hover:text-accent transition-colors"
+            >Oferta Educativa</a
+          >
+          <a href="#" class="hover:text-accent transition-colors"
+            >Comunicación</a
+          >
+          <a href="#" class="hover:text-accent transition-colors"
+            >Transparencia</a
+          >
+          <a href="#" class="hover:text-accent transition-colors"
+            >Normatividad</a
+          >
+          <a href="#" class="hover:text-accent transition-colors">Nosotros</a>
+          <a href="#" class="hover:text-accent transition-colors">Radio UTSH</a>
+          <a href="#" class="hover:text-accent transition-colors">Contacto</a>
+        </div>
+      </div>
+      <div
+        class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
+      >
+        <a
+          href="/"
+          class="flex items-center gap-3 hover:opacity-80 transition-opacity"
+        >
+          <div class="bg-zinc-100 p-2 rounded">
+            <span class="material-symbols-outlined text-zinc-600">school</span>
+          </div>
+          <div>
+            <h1
+              class="text-lg font-black text-slate-800 leading-none tracking-tight"
+            >
+              UNIVERSIDAD TECNOLÓGICA
+            </h1>
+            <p class="text-xs text-slate-500 font-medium">
+              de la Sierra Hidalguense
+            </p>
+          </div>
+        </a>
+        <a
+          href="/"
+          class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all"
+        >
+          Portal Alumnos
+        </a>
+      </div>
+      <div class="h-[2px] w-full bg-accent"></div>
+    </header>
+
+    <!-- Main Content -->
+    <slot />
+
+    <!-- Institutional Footer -->
+    <footer class="w-full bg-maroon text-white">
+      <div class="max-w-7xl mx-auto px-6 py-12">
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-12 items-center text-center md:text-left"
+        >
+          <div class="flex flex-col items-center md:items-start gap-4">
+            <div
+              class="bg-black w-20 h-20 flex items-center justify-center rounded"
+            >
+              <span class="material-symbols-outlined text-white text-4xl"
+                >pentagon</span
+              >
+            </div>
+            <p
+              class="text-[10px] font-bold uppercase tracking-widest leading-relaxed opacity-80"
+            >
+              Estado Libre y Soberano de Hidalgo<br />Universidad Tecnológica de
+              la Sierra Hidalguense
+            </p>
+          </div>
+          <div class="flex justify-center gap-16">
+            <div class="text-center">
+              <h6 class="text-3xl font-black">911</h6>
+              <p
+                class="text-[10px] font-bold uppercase tracking-widest opacity-70 mt-1"
+              >
+                Emergencia
+              </p>
+            </div>
+            <div class="text-center">
+              <h6 class="text-3xl font-black">070</h6>
+              <p
+                class="text-[10px] font-bold uppercase tracking-widest opacity-70 mt-1"
+              >
+                Atención Ciudadana
+              </p>
+            </div>
+          </div>
+          <div class="space-y-4 text-xs">
+            <div class="text-center md:text-right">
+              <p class="font-bold mb-2 uppercase tracking-widest">
+                Aviso de Privacidad
+              </p>
+              <p class="font-bold uppercase tracking-widest">Contacto</p>
+            </div>
+            <div class="text-center md:text-right opacity-80 leading-relaxed">
+              <p>Carretera México Tampico k.m. 100</p>
+              <p>Tramo Pachuca - Huejutla, C.P. 43200</p>
+              <p>Zacualtipán de Ángeles, Hidalgo, México</p>
+              <p class="font-bold mt-2">Tel: (774) 74 2 04 70</p>
+            </div>
+            <div class="flex justify-center md:justify-end gap-3">
+              <a href="#" class="hover:text-accent transition-colors">
+                <span class="material-symbols-outlined text-lg">public</span>
+              </a>
+              <a href="#" class="hover:text-accent transition-colors">
+                <span class="material-symbols-outlined text-lg"
+                  >photo_camera</span
+                >
+              </a>
+              <a href="#" class="hover:text-accent transition-colors">
+                <span class="material-symbols-outlined text-lg"
+                  >alternate_email</span
+                >
+              </a>
+              <a href="#" class="hover:text-accent transition-colors">
+                <span class="material-symbols-outlined text-lg"
+                  >play_circle</span
+                >
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="mt-12 pt-6 border-t border-white/10 text-center">
+          <p class="text-[9px] font-bold uppercase tracking-[0.2em] opacity-50">
+            Derechos Reservados 2026 © Universidad Tecnológica de la Sierra
+            Hidalguense.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
