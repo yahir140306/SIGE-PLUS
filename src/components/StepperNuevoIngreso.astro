@@ -1,0 +1,84 @@
+---
+interface Props {
+  currentStep: 1 | 2 | 3 | 4;
+}
+
+const { currentStep } = Astro.props;
+
+const steps = [
+  { number: 1, label: "Datos Personales" },
+  { number: 2, label: "Antecedentes Académicos" },
+  { number: 3, label: "Selección de Carrera" },
+  { number: 4, label: "Documentación" },
+];
+
+const progressPercentage = (currentStep / 4) * 100;
+---
+
+<div class="mb-12">
+  <div class="flex items-center justify-between mb-4">
+    <span class="text-sm font-bold text-primary uppercase tracking-wider"
+      >Paso {currentStep} de 4</span
+    >
+    <span class="text-sm font-medium text-slate-500 dark:text-slate-400"
+      >{progressPercentage}% Completado</span
+    >
+  </div>
+
+  <div
+    class="w-full bg-slate-200 dark:bg-white/10 h-2 rounded-full overflow-hidden"
+  >
+    <div
+      class="bg-primary h-full rounded-full transition-all duration-500"
+      style={`width: ${progressPercentage}%;`}
+    >
+    </div>
+  </div>
+
+  <div class="relative pt-8">
+    <div
+      class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 dark:bg-slate-700 -translate-y-1/2 z-0 rounded-full"
+    >
+    </div>
+    <div
+      class="absolute top-1/2 left-0 h-1 bg-primary -translate-y-1/2 z-0 rounded-full transition-all duration-500"
+      style={`width: ${(currentStep - 1) * 33.33}%;`}
+    >
+    </div>
+
+    <div class="relative z-10 flex justify-between">
+      {
+        steps.map((step) => (
+          <div class="flex flex-col items-center gap-2">
+            <div
+              class={`size-10 rounded-full flex items-center justify-center font-bold border-4 border-background-light dark:border-background-dark transition-all ${
+                step.number < currentStep
+                  ? "bg-primary text-white"
+                  : step.number === currentStep
+                    ? "bg-background-light dark:bg-background-dark border-primary text-primary shadow-lg"
+                    : "bg-slate-200 dark:bg-slate-700 text-slate-500"
+              }`}
+            >
+              {step.number < currentStep ? (
+                <span class="material-symbols-outlined text-sm">check</span>
+              ) : (
+                step.number
+              )}
+            </div>
+            <span
+              class={`text-xs font-bold text-center max-w-[80px] uppercase ${
+                step.number === currentStep
+                  ? "text-primary"
+                  : step.number < currentStep
+                    ? "text-slate-500"
+                    : "text-slate-400"
+              }`}
+            >
+              {step.label}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

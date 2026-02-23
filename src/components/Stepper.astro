@@ -1,0 +1,54 @@
+---
+interface Props {
+  currentStep: 1 | 2 | 3 | 4;
+}
+
+const { currentStep } = Astro.props;
+
+const steps = [
+  { number: 1, label: "Validación" },
+  { number: 2, label: "Documentos" },
+  { number: 3, label: "Pago" },
+  { number: 4, label: "Finalizar" },
+];
+---
+
+<div class="mb-10">
+  <div class="flex items-center justify-between relative mb-4">
+    <div
+      class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 dark:bg-slate-700 -z-10 transform -translate-y-1/2"
+    >
+    </div>
+
+    {
+      steps.map((step) => (
+        <div class="flex flex-col items-center">
+          <div
+            class={`size-10 rounded-full flex items-center justify-center font-bold ring-4 ring-background-light dark:ring-background-dark transition-all ${
+              step.number < currentStep
+                ? "bg-primary text-white"
+                : step.number === currentStep
+                  ? "bg-primary text-white"
+                  : "bg-slate-200 dark:bg-slate-700 text-slate-500"
+            }`}
+          >
+            {step.number < currentStep ? (
+              <span class="material-symbols-outlined text-lg">check</span>
+            ) : (
+              step.number
+            )}
+          </div>
+          <span
+            class={`text-xs mt-2 font-medium uppercase tracking-tighter ${
+              step.number === currentStep
+                ? "text-primary font-bold"
+                : "text-slate-500"
+            }`}
+          >
+            {step.label}
+          </span>
+        </div>
+      ))
+    }
+  </div>
+</div>
