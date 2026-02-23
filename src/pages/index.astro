@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import ServiceCards from "../components/ServiceCards.astro";
+import Tramites from "../components/Tramites.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Portal de Servicios Escolares - UTSH">
+  <Header />
+  <Hero />
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 mb-20">
+    <ServiceCards />
+    <Tramites />
+  </main>
+  <Footer />
+</Layout>

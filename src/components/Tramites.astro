@@ -1,0 +1,60 @@
+---
+const tramites = [
+  {
+    icon: "grade",
+    title: "Consultar Calificaciones",
+    description:
+      "Accede a tu historial académico de manera inmediata y segura.",
+  },
+  {
+    icon: "receipt_long",
+    title: "Referencia de Pago",
+    description:
+      "Genera y descarga tu formato de pago para trámites escolares.",
+  },
+  {
+    icon: "health_and_safety",
+    title: "Seguro Facultativo",
+    description: "Realiza tus trámites de alta y vigencia ante el IMSS.",
+  },
+  {
+    icon: "description",
+    title: "Constancias",
+    description: "Solicitud de documentos oficiales para trámites externos.",
+  },
+  {
+    icon: "school",
+    title: "Titulación",
+    description: "Guía detallada y requisitos para el proceso de egreso.",
+  },
+  {
+    icon: "help_outline",
+    title: "Preguntas Frecuentes",
+    description: "Resuelve tus dudas administrativas de forma rápida.",
+  },
+];
+---
+
+<section>
+  <div class="mb-12 mt-12">
+    <h2 class="section-title text-2xl font-bold">TRÁMITES FRECUENTES</h2>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {
+      tramites.map((tramite) => (
+        <a
+          class="bg-white p-8 border border-gray-100 shadow-lg flex flex-col items-center text-center group hover:border-secondary transition-colors"
+          href="#"
+        >
+          <div class="w-16 h-16 rounded-full border-2 border-secondary flex items-center justify-center text-secondary mb-4">
+            <i class="material-icons text-3xl">{tramite.icon}</i>
+          </div>
+          <h4 class="font-bold text-gray-800 uppercase text-sm tracking-wide mb-2">
+            {tramite.title}
+          </h4>
+          <p class="text-xs text-gray-500">{tramite.description}</p>
+        </a>
+      ))
+    }
+  </div>
+</section>
