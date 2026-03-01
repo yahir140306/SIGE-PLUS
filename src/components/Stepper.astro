@@ -22,9 +22,9 @@ const steps = [
 
     {
       steps.map((step) => (
-        <div class="flex flex-col items-center">
+        <div class="flex flex-col items-center flex-1 min-w-0">
           <div
-            class={`size-10 rounded-full flex items-center justify-center font-bold ring-4 ring-background-light dark:ring-background-dark transition-all ${
+            class={`size-8 sm:size-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-base ring-4 ring-background-light dark:ring-background-dark transition-all ${
               step.number < currentStep
                 ? "bg-primary text-white"
                 : step.number === currentStep
@@ -33,13 +33,15 @@ const steps = [
             }`}
           >
             {step.number < currentStep ? (
-              <span class="material-symbols-outlined text-lg">check</span>
+              <span class="material-symbols-outlined text-sm sm:text-lg">
+                check
+              </span>
             ) : (
               step.number
             )}
           </div>
           <span
-            class={`text-xs mt-2 font-medium uppercase tracking-tighter ${
+            class={`text-[9px] sm:text-xs mt-2 font-medium uppercase tracking-tighter text-center leading-tight max-w-[60px] sm:max-w-[80px] ${
               step.number === currentStep
                 ? "text-primary font-bold"
                 : "text-slate-500"
