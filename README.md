@@ -14,7 +14,26 @@ Todos los comandos se ejecutan desde la raíz del proyecto en una terminal:
 | `npm run preview`   | Previsualiza la construcción localmente              |
 | `npm run astro ...` | Ejecuta comandos CLI de Astro                        |
 
-## 📁 Estructura del Proyecto
+## � Configuración de Supabase
+
+Este proyecto utiliza Supabase como base de datos. Para configurarlo:
+
+1. **Configurar variables de entorno**: El archivo `.env` ya contiene las credenciales de Supabase:
+
+   ```env
+   SUPABASE_URL = https://iyfydkgtfeyxprlftvdv.supabase.co
+   SUPABASE_ANON_KEY = tu_clave_anon
+   ```
+
+2. **Crear las tablas**: Consulta el archivo [DATABASE.md](./DATABASE.md) para ver la estructura de las tablas necesarias y los datos de prueba.
+
+3. **Credenciales de prueba**:
+   - Matrícula: `2021004562`
+   - Contraseña: `123456`
+
+4. **Iniciar sesión**: Navega a `/login` para acceder al sistema.
+
+## �📁 Estructura del Proyecto
 
 ```
 /
@@ -30,12 +49,19 @@ Todos los comandos se ejecutan desde la raíz del proyecto en una terminal:
 │   ├── layouts/
 │   │   ├── Layout.astro
 │   │   └── ReinscripcionLayout.astro
+│   ├── lib/
+│   │   └── supabase.ts (Cliente de Supabase)
 │   └── pages/
 │       ├── index.astro
+│       ├── login.astro (Autenticación)
+│       ├── api/
+│       │   └── auth/
+│       │       └── login.ts (API de login)
 │       └── reinscripcion/
-│           ├── paso-1.astro (Validación de Datos)
-│           ├── paso-2.astro (Carga Académica)
-│           └── paso-3.astro (Referencia de Pago)
+│           ├── paso-1.astro (Validación de Datos + Auth)
+│           ├── paso-2.astro (Carga Académica + Auth)
+│           └── paso-3.astro (Referencia de Pago + Auth)
+├── .env (Variables de entorno)
 ├── astro.config.mjs
 ├── tailwind.config.mjs
 ├── package.json
@@ -47,6 +73,7 @@ Todos los comandos se ejecutan desde la raíz del proyecto en una terminal:
 - **Astro**: Framework web moderno
 - **Tailwind CSS**: Framework de utilidades CSS
 - **TypeScript**: Tipado estático
+- **Supabase**: Base de datos PostgreSQL y autenticación
 - **Material Symbols Outlined**: Iconografía moderna
 - **Google Material Icons**: Iconografía complementaria
 
@@ -70,6 +97,10 @@ Todos los comandos se ejecutan desde la raíz del proyecto en una terminal:
 - 📋 Proceso completo de reinscripción en 3 pasos
 - 🔄 Stepper de progreso visual
 - 💳 Sistema de referencia de pago
+- 🔐 Sistema de autenticación con Supabase
+- 👤 Gestión de sesiones de usuario
+- 💰 Verificación de pagos pendientes
+- 🛡️ Protección de rutas privadas
 
 ## 🎓 Módulos Implementados
 
@@ -84,8 +115,10 @@ Todos los comandos se ejecutan desde la raíz del proyecto en una terminal:
 
 #### Paso 1: Validación de Datos
 
-- Verificación de información académica
-- Datos de matrícula, nombre y carrera
+- Verificación de autenticación del estudiante
+- Visualización de datos del estudiante desde Supabase
+- Información de matrícula, nombre y carrera (datos reales)
+- Alerta de pagos pendientes
 - Confirmación de integridad de datos
 - Opción para reportar errores
 
