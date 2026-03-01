@@ -214,3 +214,13 @@ const materias = [
     </div>
   </main>
 </ReinscripcionLayout>
+
+<script>
+  // Check if user is authenticated
+  const userStr = sessionStorage.getItem("user");
+
+  if (!userStr) {
+    // Redirect to login if not authenticated
+    window.location.href = "/login";
+  }
+</script>

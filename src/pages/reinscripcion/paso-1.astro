@@ -8,6 +8,27 @@ import Stepper from "../../components/Stepper.astro";
     <div class="w-full max-w-3xl">
       <Stepper currentStep={1} />
 
+      <!-- Alert for payment pending -->
+      <div
+        id="alert-payment"
+        class="hidden bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6"
+      >
+        <div class="flex items-start">
+          <span class="material-symbols-outlined text-yellow-600 mr-3"
+            >warning</span
+          >
+          <div>
+            <p class="text-sm font-bold text-yellow-800 dark:text-yellow-200">
+              Pago Pendiente
+            </p>
+            <p class="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+              Tienes pagos pendientes que deben ser cubiertos antes de poder
+              completar tu reinscripción.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- Validation Card -->
       <div
         class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden"
@@ -42,8 +63,10 @@ import Stepper from "../../components/Stepper.astro";
                     class="material-symbols-outlined text-slate-400 mr-3 text-lg"
                     >badge</span
                   >
-                  <span class="text-slate-600 dark:text-slate-300 font-bold"
-                    >2021004562</span
+                  <span
+                    id="matricula"
+                    class="text-slate-600 dark:text-slate-300 font-bold"
+                    >Cargando...</span
                   >
                 </div>
               </div>
@@ -60,8 +83,10 @@ import Stepper from "../../components/Stepper.astro";
                     class="material-symbols-outlined text-slate-400 mr-3 text-lg"
                     >calendar_today</span
                   >
-                  <span class="text-slate-600 dark:text-slate-300 font-bold"
-                    >Ene - Abr 2026</span
+                  <span
+                    id="periodo"
+                    class="text-slate-600 dark:text-slate-300 font-bold"
+                    >Cargando...</span
                   >
                 </div>
               </div>
@@ -78,8 +103,10 @@ import Stepper from "../../components/Stepper.astro";
                     class="material-symbols-outlined text-slate-400 mr-3 text-lg"
                     >person</span
                   >
-                  <span class="text-slate-600 dark:text-slate-300 font-bold"
-                    >GARCÍA MARTÍNEZ JUAN CARLOS</span
+                  <span
+                    id="nombre"
+                    class="text-slate-600 dark:text-slate-300 font-bold"
+                    >Cargando...</span
                   >
                 </div>
               </div>
@@ -96,9 +123,10 @@ import Stepper from "../../components/Stepper.astro";
                     class="material-symbols-outlined text-slate-400 mr-3 text-lg"
                     >account_tree</span
                   >
-                  <span class="text-slate-600 dark:text-slate-300 font-bold"
-                    >TSU EN TECNOLOGÍAS DE LA INFORMACIÓN - ÁREA DESARROLLO DE
-                    SOFTWARE MULTIPLATAFORMA</span
+                  <span
+                    id="carrera"
+                    class="text-slate-600 dark:text-slate-300 font-bold"
+                    >Cargando...</span
                   >
                 </div>
               </div>
@@ -171,3 +199,46 @@ import Stepper from "../../components/Stepper.astro";
     </div>
   </main>
 </ReinscripcionLayout>
+<script>
+  // Check if user is authenticated
+  const userStr = sessionStorage.getItem("user");
+
+  if (!userStr) {
+    // Redirect to login if not authenticated
+    window.location.href = "/login";
+  } else {
+    const user = JSON.parse(userStr);
+
+    // Display user data
+    const matriculaEl = document.getElementById("matricula");
+    const nombreEl = document.getElementById("nombre");
+    const carreraEl = document.getElementById("carrera");
+    const periodoEl = document.getElementById("periodo");
+    const alertPayment = document.getElementById("alert-payment");
+
+    if (matriculaEl) {
+      matriculaEl.textContent = user.matricula || "N/A";
+    }
+
+    if (nombreEl) {
+      const nombreCompleto =
+        `${user.apellido_paterno || ""} ${user.apellido_materno || ""} ${user.nombre || ""}`
+          .trim()
+          .toUpperCase();
+      nombreEl.textContent = nombreCompleto || "N/A";
+    }
+
+    if (carreraEl && user.carrera) {
+      carreraEl.textContent = user.carrera.nombre || "N/A";
+    }
+
+    if (periodoEl && user.periodo) {
+      periodoEl.textContent = user.periodo.nombre || "N/A";
+    }
+
+    // Show payment alert if there are pending payments
+    if (alertPayment && user.tienePagosPendientes) {
+      alertPayment.classList.remove("hidden");
+    }
+  }
+</script>
