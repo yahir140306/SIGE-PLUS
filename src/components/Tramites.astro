@@ -42,18 +42,20 @@ const tramites = [
       TRÁMITES FRECUENTES
     </h2>
   </div>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+  <div
+    class="grid grid-cols-1 rounded-md sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+  >
     {
       tramites.map((tramite) => (
         <a
           class="bg-white p-6 sm:p-8 border border-gray-100 shadow-lg flex flex-col items-center text-center group hover:border-secondary transition-colors"
           href={tramite.href || "#"}
         >
-          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-secondary flex items-center justify-center text-secondary mb-3 sm:mb-4">
+          {/* <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-secondary flex items-center justify-center text-secondary mb-3 sm:mb-4">
             <span class="material-symbols-outlined text-2xl sm:text-3xl">
               {tramite.icon}
             </span>
-          </div>
+          </div> */}
           <h4 class="font-bold text-gray-800 uppercase text-xs sm:text-sm tracking-wide mb-2">
             {tramite.title}
           </h4>
