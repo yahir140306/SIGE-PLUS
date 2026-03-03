@@ -42,6 +42,7 @@ export const POST: APIRoute = async ({ request }) => {
     console.log("✅ Sesión válida. Extrayendo datos...");
 
     // Extraer todos los datos del estudiante
+    // getAllData() ya muestra todo el detalle en consola
     const allData = await sigeClient.getAllData();
 
     // Guardar la sesión para uso futuro
@@ -49,18 +50,6 @@ export const POST: APIRoute = async ({ request }) => {
     if (matriculaExtraida) {
       sessionManager.saveSession(matriculaExtraida, phpsessid);
     }
-
-    console.log("🎉 Datos extraídos exitosamente:");
-    console.log(
-      `   👤 ${allData.datosPersonales.nombre} ${allData.datosPersonales.apPaterno}`,
-    );
-    console.log(
-      `   📚 ${allData.historialAcademico.materias.length} materias en historial`,
-    );
-    console.log(
-      `   📊 ${allData.calificacionesActuales.length} calificaciones actuales`,
-    );
-    console.log(`   💰 ${allData.adeudos.length} adeudos`);
 
     return new Response(
       JSON.stringify({
