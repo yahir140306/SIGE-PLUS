@@ -322,238 +322,361 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
     }
   }
 
-  // Populate user information
-  const studentName = document.getElementById("student-name");
-  const studentInfo = document.getElementById("student-info");
-  const studentSemester = document.getElementById("student-semester");
-  const studentAverage = document.getElementById("student-average");
-  const gpaMessage = document.getElementById("gpa-message");
-  const gpaAlert = document.getElementById("gpa-alert");
+  // Función para actualizar la información del estudiante
+  function updateStudentInfo(promedio: number) {
+    const studentName = document.getElementById("student-name");
+    const studentInfo = document.getElementById("student-info");
+    const studentSemester = document.getElementById("student-semester");
+    const studentAverage = document.getElementById("student-average");
+    const gpaMessage = document.getElementById("gpa-message");
+    const gpaAlert = document.getElementById("gpa-alert");
 
-  if (studentName && studentInfo && studentSemester && studentAverage) {
-    const fullName =
-      `${user.nombre} ${user.apellido_paterno} ${user.apellido_materno || ""}`.trim();
-    studentName.textContent = fullName;
+    if (studentName && studentInfo && studentSemester && studentAverage) {
+      const fullName =
+        `${user.nombre} ${user.apellido_paterno} ${user.apellido_materno || ""}`.trim();
+      studentName.textContent = fullName;
 
-    const carreraName = user.carrera?.nombre || "Carrera no especificada";
-    studentInfo.textContent = `ID: ${user.matricula} | ${carreraName}`;
+      const carreraName = user.carrera?.nombre || "Carrera no especificada";
+      studentInfo.textContent = `ID: ${user.matricula} | ${carreraName}`;
 
-    studentSemester.textContent = `Cuatrimestre: ${user.cuatrimestre || "--"}`;
+      studentSemester.textContent = `Cuatrimestre: ${user.cuatrimestre || "--"}`;
 
-    const promedio = user.promedio || 0;
-    studentAverage.textContent = `Promedio: ${promedio.toFixed(1)}`;
+      studentAverage.textContent = `Promedio: ${promedio.toFixed(2)}`;
 
-    // Update GPA message
-    if (gpaMessage && gpaAlert) {
-      if (promedio >= 9.0) {
-        gpaAlert.classList.remove(
-          "bg-secondary/5",
-          "dark:bg-secondary/10",
-          "border-secondary/20",
-        );
-        gpaAlert.classList.add(
-          "bg-primary/5",
-          "dark:bg-primary/10",
-          "border-primary/20",
-        );
-        gpaAlert
-          .querySelector(".bg-secondary\\/20")
-          ?.classList.remove("bg-secondary/20", "text-secondary");
-        gpaAlert
-          .querySelector(".bg-secondary\\/20")
-          ?.classList.add("bg-primary/20", "text-primary");
-        gpaAlert
-          .querySelector(".text-secondary")
-          ?.classList.remove("text-secondary");
-        gpaAlert
-          .querySelector(".text-secondary")
-          ?.classList.add("text-primary");
-        gpaMessage.innerHTML = `¡Felicidades! Tu promedio actual es de <b>${promedio.toFixed(1)}</b>. Tienes derecho a descuentos por excelencia académica este cuatrimestre.`;
-      } else {
-        gpaMessage.innerHTML = `Debido a que tu promedio actual es de <b>${promedio.toFixed(1)}</b> (menor a 9.0), no se aplican los descuentos de excelencia académica este cuatrimestre.`;
+      // Update GPA message
+      if (gpaMessage && gpaAlert) {
+        if (promedio >= 9.0) {
+          gpaAlert.classList.remove(
+            "bg-secondary/5",
+            "dark:bg-secondary/10",
+            "border-secondary/20",
+          );
+          gpaAlert.classList.add(
+            "bg-primary/5",
+            "dark:bg-primary/10",
+            "border-primary/20",
+          );
+          gpaAlert
+            .querySelector(".bg-secondary\\/20")
+            ?.classList.remove("bg-secondary/20", "text-secondary");
+          gpaAlert
+            .querySelector(".bg-secondary\\/20")
+            ?.classList.add("bg-primary/20", "text-primary");
+          gpaAlert
+            .querySelector(".text-secondary")
+            ?.classList.remove("text-secondary");
+          gpaAlert
+            .querySelector(".text-secondary")
+            ?.classList.add("text-primary");
+          gpaMessage.innerHTML = `¡Felicidades! Tu promedio actual es de <b>${promedio.toFixed(2)}</b>. Tienes derecho a <b>BECA ACADÉMICA</b> del 100% en tus pagos mensuales este cuatrimestre. 🎉`;
+        } else {
+          gpaMessage.innerHTML = `Tu promedio actual es de <b>${promedio.toFixed(2)}</b>. Para obtener la beca académica del 100%, necesitas un promedio de 9.0 o superior.`;
+        }
       }
     }
   }
 
-  // Load payments data (mock data for now)
-  const paymentsData = [
-    {
-      mes: "Enero",
-      fecha: "15 / Ene / 2026",
-      concepto: "Mensualidad #1",
-      monto: 2450,
-      estado: "pagado",
-    },
-    {
-      mes: "Febrero",
-      fecha: "15 / Feb / 2026",
-      concepto: "Mensualidad #2",
-      monto: 2450,
-      estado: "pagado",
-    },
-    {
-      mes: "Marzo",
-      fecha: "15 / Mar / 2026",
-      concepto: "Mensualidad #3",
-      monto: 2450,
-      estado: "pendiente",
-    },
-    {
-      mes: "Abril",
-      fecha: "15 / Abr / 2026",
-      concepto: "Mensualidad #4",
-      monto: 2450,
-      estado: "proximo",
-    },
-  ];
+  // Función para cargar datos académicos del SIGE
+  async function loadAcademicData() {
+    try {
+      console.log("📊 Cargando datos académicos del SIGE...");
+      
+      const response = await fetch(
+        `/api/sige/academic-data?matricula=${user.matricula}`
+      );
 
-  // Count payments
-  const paidCount = paymentsData.filter((p) => p.estado === "pagado").length;
-  const pendingCount = paymentsData.filter(
-    (p) => p.estado === "pendiente",
-  ).length;
+      if (!response.ok) {
+        throw new Error("No se pudieron cargar los datos académicos");
+      }
 
-  const paidCountEl = document.getElementById("paid-count");
-  const pendingCountEl = document.getElementById("pending-count");
-  if (paidCountEl) paidCountEl.textContent = String(paidCount);
-  if (pendingCountEl) pendingCountEl.textContent = String(pendingCount);
+      const data = await response.json();
 
-  // Render desktop table
-  const paymentsTable = document.getElementById("payments-table");
-  if (paymentsTable) {
-    paymentsTable.innerHTML = paymentsData
-      .map((payment) => {
-        let statusHtml = "";
-        let actionHtml = "";
-
-        if (payment.estado === "pagado") {
-          statusHtml = `
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
-            <span class="material-symbols-outlined text-[14px] font-bold"></span>
-            PAGADO
-          </span>
-        `;
-          actionHtml = `
-          <button class="text-secondary hover:text-secondary/80 font-bold text-xs flex items-center gap-1 ml-auto transition-colors">
-            <span class="material-symbols-outlined text-sm"></span>
-            Ver Recibo
-          </button>
-        `;
-        } else if (payment.estado === "pendiente") {
-          statusHtml = `
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
-            <span class="material-symbols-outlined text-[14px] font-bold"></span>
-            PENDIENTE
-          </span>
-        `;
-          actionHtml = `
-          <button class="bg-maroon hover:bg-maroon/90 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm">
-            Generar Referencia
-          </button>
-        `;
-        } else {
-          statusHtml = `
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
-            <span class="material-symbols-outlined text-[14px] font-bold"></span>
-            PRÓXIMO
-          </span>
-        `;
-          actionHtml = `
-          <button class="bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 px-4 py-1.5 rounded-lg text-xs font-bold cursor-not-allowed" disabled>
-            Generar Referencia
-          </button>
-        `;
+      if (data.success && data.academico) {
+        console.log("✅ Datos académicos cargados:", data);
+        
+        // Actualizar badge de fuente de datos a SIGE
+        const dataSourceBadge = document.getElementById("data-source-badge");
+        const dataSourceText = document.getElementById("data-source-text");
+        if (dataSourceBadge && dataSourceText) {
+          dataSourceBadge.classList.remove(
+            "bg-blue-100",
+            "dark:bg-blue-900/20",
+            "text-blue-700",
+            "dark:text-blue-400",
+            "border-blue-200",
+            "dark:border-blue-800"
+          );
+          dataSourceBadge.classList.add(
+            "bg-green-100",
+            "dark:bg-green-900/20",
+            "text-green-700",
+            "dark:text-green-400",
+            "border",
+            "border-green-200",
+            "dark:border-green-800"
+          );
+          dataSourceText.textContent = "Datos del SIGE";
         }
 
-        return `
-        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-          <td class="px-6 py-4">
-            <span class="font-semibold text-slate-900 dark:text-slate-100">${payment.mes}</span>
-          </td>
-          <td class="px-6 py-4 text-sm text-slate-500">${payment.fecha}</td>
-          <td class="px-6 py-4 text-sm text-slate-500">${payment.concepto}</td>
-          <td class="px-6 py-4">
-            <span class="font-bold text-slate-900 dark:text-slate-100">$${payment.monto.toFixed(2)}</span>
-          </td>
-          <td class="px-6 py-4 text-center">${statusHtml}</td>
-          <td class="px-6 py-4 text-right">${actionHtml}</td>
-        </tr>
-      `;
-      })
-      .join("");
+        // Actualizar información con el promedio real del SIGE
+        updateStudentInfo(data.academico.promedioGeneral);
+        
+        // Actualizar tabla de pagos con información de beca
+        loadPaymentsData(data.academico.tieneBecaAcademica);
+        
+        // Guardar datos académicos en sessionStorage para uso posterior
+        sessionStorage.setItem("academicData", JSON.stringify(data));
+      } else {
+        console.warn("⚠️ No hay datos del SIGE, usando datos locales");
+        // Usar promedio local si no hay datos del SIGE
+        const promedio = user.promedio || 0;
+        updateStudentInfo(promedio);
+        loadPaymentsData(promedio >= 9.0);
+      }
+    } catch (error) {
+      console.error("❌ Error cargando datos académicos:", error);
+      // Fallback a datos locales
+      const promedio = user.promedio || 0;
+      updateStudentInfo(promedio);
+      loadPaymentsData(promedio >= 9.0);
+    }
   }
 
-  // Render mobile cards
-  const paymentsMobile = document.getElementById("payments-mobile");
-  if (paymentsMobile) {
-    paymentsMobile.innerHTML = paymentsData
-      .map((payment) => {
-        let statusHtml = "";
-        let actionHtml = "";
+  // Cargar datos al iniciar
+  loadAcademicData();
 
-        if (payment.estado === "pagado") {
-          statusHtml = `
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
-            <span class="material-symbols-outlined text-[14px] font-bold"></span>
-            PAGADO
-          </span>
-        `;
-          actionHtml = `
-          <button class="w-full text-secondary hover:text-secondary/80 font-bold text-xs flex items-center justify-center gap-2 py-2 transition-colors">
-            <span class="material-symbols-outlined text-sm"></span>
-            Ver Recibo
-          </button>
-        `;
-        } else if (payment.estado === "pendiente") {
-          statusHtml = `
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
-            <span class="material-symbols-outlined text-[14px] font-bold"></span>
-            PENDIENTE
-          </span>
-        `;
-          actionHtml = `
-          <button class="w-full bg-maroon hover:bg-maroon/90 text-white py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
-            Generar Referencia
-          </button>
-        `;
-        } else {
-          statusHtml = `
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
-            <span class="material-symbols-outlined text-[14px] font-bold"></span>
-            PRÓXIMO
-          </span>
-        `;
-          actionHtml = `
-          <button class="w-full bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 py-2 rounded-lg text-xs font-bold cursor-not-allowed" disabled>
-            Generar Referencia
-          </button>
-        `;
-        }
+  // Load payments data
+  function loadPaymentsData(tieneBeca: boolean = false) {
+    const montoBase = 2450;
+    const montoConBeca = tieneBeca ? 0 : montoBase; // 100% de descuento si tiene beca
 
-        return `
-        <div class="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-          <div class="flex justify-between items-start mb-3">
-            <div>
-              <h4 class="font-semibold text-slate-900 dark:text-slate-100 text-sm">${payment.mes}</h4>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${payment.fecha}</p>
+    const paymentsData = [
+      {
+        mes: "Enero",
+        fecha: "15 / Ene / 2026",
+        concepto: "Mensualidad #1",
+        monto: montoConBeca,
+        montoOriginal: montoBase,
+        estado: "pagado",
+        tieneBeca: tieneBeca,
+      },
+      {
+        mes: "Febrero",
+        fecha: "15 / Feb / 2026",
+        concepto: "Mensualidad #2",
+        monto: montoConBeca,
+        montoOriginal: montoBase,
+        estado: "pagado",
+        tieneBeca: tieneBeca,
+      },
+      {
+        mes: "Marzo",
+        fecha: "15 / Mar / 2026",
+        concepto: "Mensualidad #3",
+        monto: montoConBeca,
+        montoOriginal: montoBase,
+        estado: "pendiente",
+        tieneBeca: tieneBeca,
+      },
+      {
+        mes: "Abril",
+        fecha: "15 / Abr / 2026",
+        concepto: "Mensualidad #4",
+        monto: montoConBeca,
+        montoOriginal: montoBase,
+        estado: "proximo",
+        tieneBeca: tieneBeca,
+      },
+    ];
+
+    // Count payments
+    const paidCount = paymentsData.filter((p) => p.estado === "pagado").length;
+    const pendingCount = paymentsData.filter(
+      (p) => p.estado === "pendiente",
+    ).length;
+
+    const paidCountEl = document.getElementById("paid-count");
+    const pendingCountEl = document.getElementById("pending-count");
+    if (paidCountEl) paidCountEl.textContent = String(paidCount);
+    if (pendingCountEl) pendingCountEl.textContent = String(pendingCount);
+
+    // Render desktop table
+    const paymentsTable = document.getElementById("payments-table");
+    if (paymentsTable) {
+      paymentsTable.innerHTML = paymentsData
+        .map((payment) => {
+          let statusHtml = "";
+          let actionHtml = "";
+          let montoHtml = "";
+
+          if (payment.tieneBeca) {
+            montoHtml = `
+              <div class="flex flex-col items-start">
+                <span class="text-xs text-slate-400 line-through">$${payment.montoOriginal.toFixed(2)}</span>
+                <span class="font-bold text-primary">$0.00</span>
+                <span class="text-[10px] text-primary font-bold">BECA 100%</span>
+              </div>
+            `;
+          } else {
+            montoHtml = `<span class="font-bold text-slate-900 dark:text-slate-100">$${payment.monto.toFixed(2)}</span>`;
+          }
+
+          if (payment.estado === "pagado") {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PAGADO
+            </span>
+          `;
+            actionHtml = `
+            <button class="text-secondary hover:text-secondary/80 font-bold text-xs flex items-center gap-1 ml-auto transition-colors">
+              <span class="material-symbols-outlined text-sm"></span>
+              Ver Recibo
+            </button>
+          `;
+          } else if (payment.estado === "pendiente") {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PENDIENTE
+            </span>
+          `;
+            if (payment.tieneBeca) {
+              actionHtml = `
+                <button class="bg-primary hover:bg-primary/90 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm">
+                  Confirmar Matrícula
+                </button>
+              `;
+            } else {
+              actionHtml = `
+                <button class="bg-maroon hover:bg-maroon/90 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm">
+                  Generar Referencia
+                </button>
+              `;
+            }
+          } else {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PRÓXIMO
+            </span>
+          `;
+            actionHtml = `
+            <button class="bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 px-4 py-1.5 rounded-lg text-xs font-bold cursor-not-allowed" disabled>
+              Generar Referencia
+            </button>
+          `;
+          }
+
+          return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+            <td class="px-6 py-4">
+              <span class="font-semibold text-slate-900 dark:text-slate-100">${payment.mes}</span>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">${payment.fecha}</td>
+            <td class="px-6 py-4 text-sm text-slate-500">${payment.concepto}</td>
+            <td class="px-6 py-4">${montoHtml}</td>
+            <td class="px-6 py-4 text-center">${statusHtml}</td>
+            <td class="px-6 py-4 text-right">${actionHtml}</td>
+          </tr>
+        `;
+        })
+        .join("");
+    }
+
+    // Render mobile cards
+    const paymentsMobile = document.getElementById("payments-mobile");
+    if (paymentsMobile) {
+      paymentsMobile.innerHTML = paymentsData
+        .map((payment) => {
+          let statusHtml = "";
+          let actionHtml = "";
+          let montoHtml = "";
+
+          if (payment.tieneBeca) {
+            montoHtml = `
+              <div class="flex flex-col items-end">
+                <span class="text-xs text-slate-400 line-through">$${payment.montoOriginal.toFixed(2)}</span>
+                <span class="font-bold text-primary">$0.00</span>
+                <span class="text-[10px] text-primary font-bold">BECA 100%</span>
+              </div>
+            `;
+          } else {
+            montoHtml = `<span class="font-bold text-slate-900 dark:text-slate-100">$${payment.monto.toFixed(2)}</span>`;
+          }
+
+          if (payment.estado === "pagado") {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PAGADO
+            </span>
+          `;
+            actionHtml = `
+            <button class="w-full text-secondary hover:text-secondary/80 font-bold text-xs flex items-center justify-center gap-2 py-2 transition-colors">
+              <span class="material-symbols-outlined text-sm"></span>
+              Ver Recibo
+            </button>
+          `;
+          } else if (payment.estado === "pendiente") {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PENDIENTE
+            </span>
+          `;
+            if (payment.tieneBeca) {
+              actionHtml = `
+                <button class="w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
+                  Confirmar Matrícula
+                </button>
+              `;
+            } else {
+              actionHtml = `
+                <button class="w-full bg-maroon hover:bg-maroon/90 text-white py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
+                  Generar Referencia
+                </button>
+              `;
+            }
+          } else {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PRÓXIMO
+            </span>
+          `;
+            actionHtml = `
+            <button class="w-full bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 py-2 rounded-lg text-xs font-bold cursor-not-allowed" disabled>
+              Generar Referencia
+            </button>
+          `;
+          }
+
+          return `
+          <div class="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h4 class="font-semibold text-slate-900 dark:text-slate-100 text-sm">${payment.mes}</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${payment.fecha}</p>
+              </div>
+              ${statusHtml}
             </div>
-            ${statusHtml}
+            <div class="space-y-2 mb-3">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500 dark:text-slate-400">Concepto:</span>
+                <span class="text-slate-700 dark:text-slate-300">${payment.concepto}</span>
+              </div>
+              <div class="flex justify-between text-xs items-end">
+                <span class="text-slate-500 dark:text-slate-400">Monto:</span>
+                ${montoHtml}
+              </div>
+            </div>
+            ${actionHtml}
           </div>
-          <div class="space-y-2 mb-3">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-500 dark:text-slate-400">Concepto:</span>
-              <span class="text-slate-700 dark:text-slate-300">${payment.concepto}</span>
-            </div>
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-500 dark:text-slate-400">Monto:</span>
-              <span class="font-bold text-slate-900 dark:text-slate-100">$${payment.monto.toFixed(2)}</span>
-            </div>
-          </div>
-          ${actionHtml}
-        </div>
-      `;
-      })
-      .join("");
+        `;
+        })
+        .join("");
+    }
   }
 
   // Logout functionality
