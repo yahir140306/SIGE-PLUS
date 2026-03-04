@@ -9,8 +9,11 @@ import type { APIRoute } from "astro";
 import { supabase } from "../../../lib/supabase";
 
 export const POST: APIRoute = async ({ request }) => {
+  let matricula: string | undefined;
+  let data: any;
+
   try {
-    const { data, matricula } = await request.json();
+    ({ data, matricula } = await request.json());
 
     if (!data || !matricula) {
       return new Response(
@@ -33,7 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
     // 1. Buscar el estudiante por matrícula en la tabla existente
     const { data: estudianteExistente, error: errorBusqueda } = await supabase
       .from("estudiantes")
-      .select("id, matricula, nombre_completo")
+      .select("matricula, nombre, apellido_paterno, apellido_materno")
       .eq("matricula", matricula)
       .single();
 
@@ -42,8 +45,6 @@ export const POST: APIRoute = async ({ request }) => {
       console.error("❌ Error buscando estudiante:", errorBusqueda);
       throw errorBusqueda;
     }
-
-    let estudianteId = estudianteExistente?.id;
 
     if (!estudianteExistente) {
       console.log("ℹ️ Estudiante no encontrado en la BD");
@@ -54,16 +55,15 @@ export const POST: APIRoute = async ({ request }) => {
         "   Guárdalo en la tabla estudiantes manualmente si es necesario",
       );
     } else {
-      console.log(
-        `✅ Estudiante encontrado: ${estudianteExistente.nombre_completo}`,
-      );
+      const nombreCompleto =
+        `${estudianteExistente.nombre} ${estudianteExistente.apellido_paterno} ${estudianteExistente.apellido_materno || ""}`.trim();
+      console.log(`✅ Estudiante encontrado: ${nombreCompleto}`);
     }
 
     // 2. Guardar respaldo completo en formato JSON
     const { data: respaldo, error: errorRespaldo } = await supabase
       .from("sige_datos_respaldo")
       .insert({
-        estudiante_id: estudianteId || null,
         matricula: matricula,
         datos_personales: datosPersonales,
         historial_academico: historialAcademico,
@@ -87,7 +87,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 3. Guardar historial de materias en tabla estructurada (solo si el estudiante existe)
     if (
-      estudianteId &&
+      estudianteExistente &&
       historialAcademico.materias &&
       historialAcademico.materias.length > 0
     ) {
@@ -95,7 +95,7 @@ export const POST: APIRoute = async ({ request }) => {
       await supabase
         .from("sige_historial_materias")
         .delete()
-        .eq("estudiante_id", estudianteId);
+        .eq("matricula", matricula);
 
       // Preparar materias para insertar
       const materiasParaGuardar = historialAcademico.materias.map(
@@ -110,14 +110,15 @@ export const POST: APIRoute = async ({ request }) => {
           }
 
           return {
-            estudiante_id: estudianteId,
             matricula: matricula,
-            nombre_materia: materia.nombre,
+            nombre_materia: materia.asignatura || materia.nombre || "",
             calificacion_texto: materia.calificacion,
             calificacion_numerica: calificacionNum,
-            creditos: materia.creditos ? parseInt(materia.creditos) : null,
-            periodo: materia.periodo,
-            profesor: materia.profesor,
+            creditos: null, // El SIGE no proporciona créditos en el historial
+            periodo: datosPersonales?.periodoActivo || null,
+            profesor: null, // El SIGE no proporciona profesor en el historial
+            cuatrimestre: materia.cuatrimestre || null,
+            grupo: materia.grupo || null,
           };
         },
       );
@@ -140,35 +141,47 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // 4. Guardar adeudos en tabla estructurada (solo si el estudiante existe)
-    if (estudianteId && adeudos && adeudos.length > 0) {
+    if (estudianteExistente && adeudos && adeudos.length > 0) {
       // Eliminar adeudos anteriores del SIGE
       await supabase
         .from("sige_adeudos")
         .delete()
-        .eq("estudiante_id", estudianteId)
+        .eq("matricula", matricula)
         .eq("resuelto", false);
 
       // Preparar adeudos para insertar
       const adeudosParaGuardar = adeudos.map((adeudo: any) => {
-        // Intentar convertir monto a número
-        let montoNum = null;
+        // Intentar convertir importe a número
+        let importeNum = null;
         try {
           // Limpiar el string: quitar $, comas, etc
-          const montoLimpio = adeudo.monto.replace(/[$,]/g, "");
-          const monto = parseFloat(montoLimpio);
-          if (!isNaN(monto)) montoNum = monto;
+          const importeLimpio = (adeudo.importe || "").replace(/[$,]/g, "");
+          const imp = parseFloat(importeLimpio);
+          if (!isNaN(imp)) importeNum = imp;
+        } catch (e) {
+          // Ignorar conversión fallida
+        }
+
+        // Intentar convertir recargos a número
+        let recargosNum = null;
+        try {
+          const recargosLimpio = (adeudo.recargos || "").replace(/[$,]/g, "");
+          const rec = parseFloat(recargosLimpio);
+          if (!isNaN(rec)) recargosNum = rec;
         } catch (e) {
           // Ignorar conversión fallida
         }
 
         return {
-          estudiante_id: estudianteId,
           matricula: matricula,
-          concepto: adeudo.concepto,
-          monto_texto: adeudo.monto,
-          monto_decimal: montoNum,
-          fecha_limite_texto: adeudo.fecha_limite,
-          estatus: adeudo.estado || "PENDIENTE",
+          concepto: adeudo.concepto || "",
+          descripcion: adeudo.descripcion || null,
+          monto_texto: adeudo.importe || null,
+          monto_decimal: importeNum,
+          recargos_texto: adeudo.recargos || null,
+          recargos_decimal: recargosNum,
+          fecha_limite_texto: null, // El SIGE no proporciona fecha límite
+          estatus: "PENDIENTE",
         };
       });
 
@@ -190,16 +203,15 @@ export const POST: APIRoute = async ({ request }) => {
     console.log("🎉 Sincronización completada exitosamente");
 
     // Preparar respuesta con resumen
-    const nombreCompleto =
-      estudianteExistente?.nombre_completo ||
-      `${datosPersonales.nombre} ${datosPersonales.apPaterno} ${datosPersonales.apMaterno}`;
+    const nombreCompleto = estudianteExistente
+      ? `${estudianteExistente.nombre} ${estudianteExistente.apellido_paterno} ${estudianteExistente.apellido_materno || ""}`.trim()
+      : datosPersonales?.nombreCompleto || "Nombre no disponible";
 
     return new Response(
       JSON.stringify({
         success: true,
         message: "Datos del SIGE guardados exitosamente",
         estudiante: {
-          id: estudianteId || null,
           matricula: matricula,
           nombre: nombreCompleto,
           existeEnBD: !!estudianteExistente,
