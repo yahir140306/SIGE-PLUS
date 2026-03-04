@@ -380,9 +380,9 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
   async function loadAcademicData() {
     try {
       console.log("📊 Cargando datos académicos del SIGE...");
-      
+
       const response = await fetch(
-        `/api/sige/academic-data?matricula=${user.matricula}`
+        `/api/sige/academic-data?matricula=${user.matricula}`,
       );
 
       if (!response.ok) {
@@ -393,7 +393,7 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
 
       if (data.success && data.academico) {
         console.log("✅ Datos académicos cargados:", data);
-        
+
         // Actualizar badge de fuente de datos a SIGE
         const dataSourceBadge = document.getElementById("data-source-badge");
         const dataSourceText = document.getElementById("data-source-text");
@@ -404,7 +404,7 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
             "text-blue-700",
             "dark:text-blue-400",
             "border-blue-200",
-            "dark:border-blue-800"
+            "dark:border-blue-800",
           );
           dataSourceBadge.classList.add(
             "bg-green-100",
@@ -413,17 +413,17 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
             "dark:text-green-400",
             "border",
             "border-green-200",
-            "dark:border-green-800"
+            "dark:border-green-800",
           );
           dataSourceText.textContent = "Datos del SIGE";
         }
 
         // Actualizar información con el promedio real del SIGE
         updateStudentInfo(data.academico.promedioGeneral);
-        
+
         // Actualizar tabla de pagos con información de beca
         loadPaymentsData(data.academico.tieneBecaAcademica);
-        
+
         // Guardar datos académicos en sessionStorage para uso posterior
         sessionStorage.setItem("academicData", JSON.stringify(data));
       } else {
