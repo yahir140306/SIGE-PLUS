@@ -1,6 +1,6 @@
 /**
  * API: Obtener datos académicos del estudiante desde el SIGE
- * 
+ *
  * Este endpoint recupera los datos del SIGE almacenados en la base de datos,
  * incluyendo el promedio académico real para cálculo de becas.
  */
@@ -14,10 +14,10 @@ export const GET: APIRoute = async ({ request }) => {
     const matricula = url.searchParams.get("matricula");
 
     if (!matricula) {
-      return new Response(
-        JSON.stringify({ error: "Matrícula es requerida" }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
-      );
+      return new Response(JSON.stringify({ error: "Matrícula es requerida" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     console.log("📊 Obteniendo datos académicos del SIGE para:", matricula);
@@ -50,7 +50,10 @@ export const GET: APIRoute = async ({ request }) => {
 
     if (materias && materias.length > 0) {
       for (const materia of materias) {
-        if (materia.calificacion_numerica && materia.calificacion_numerica > 0) {
+        if (
+          materia.calificacion_numerica &&
+          materia.calificacion_numerica > 0
+        ) {
           sumaCalificaciones += materia.calificacion_numerica;
           totalMaterias++;
         }
@@ -60,7 +63,9 @@ export const GET: APIRoute = async ({ request }) => {
         promedioGeneral = sumaCalificaciones / totalMaterias;
       }
 
-      console.log(`📈 Promedio calculado: ${promedioGeneral.toFixed(2)} (${totalMaterias} materias)`);
+      console.log(
+        `📈 Promedio calculado: ${promedioGeneral.toFixed(2)} (${totalMaterias} materias)`,
+      );
     }
 
     // 4. Obtener adeudos pendientes del SIGE
@@ -105,14 +110,16 @@ export const GET: APIRoute = async ({ request }) => {
         success: true,
         estudiante: {
           matricula: estudiante.matricula,
-          nombreCompleto: `${estudiante.nombre} ${estudiante.apellido_paterno} ${estudiante.apellido_materno || ""}`.trim(),
+          nombreCompleto:
+            `${estudiante.nombre} ${estudiante.apellido_paterno} ${estudiante.apellido_materno || ""}`.trim(),
         },
         academico: {
           promedioGeneral: parseFloat(promedioGeneral.toFixed(2)),
           totalMaterias: totalMaterias,
-          materiasAprobadas: materias?.filter(m => 
-            m.calificacion_numerica && m.calificacion_numerica >= 7
-          ).length || 0,
+          materiasAprobadas:
+            materias?.filter(
+              (m) => m.calificacion_numerica && m.calificacion_numerica >= 7,
+            ).length || 0,
           tieneBecaAcademica: tieneBecaAcademica,
           porcentajeBeca: porcentajeBeca,
         },
