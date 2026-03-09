@@ -1,8 +1,8 @@
 ---
-import PagosLayout from "../../layouts/PagosLayout.astro";
+import Layout from "../../layouts/Layout.astro";
 ---
 
-<PagosLayout title="UTSH - Gestión de Pagos">
+<Layout title="UTSH - Gestión de Pagos">
   <main class="max-w-7xl mx-auto px-4 py-6 sm:py-8 sm:px-6 lg:px-8 flex-grow">
     <!-- Styled Title with lateral lines -->
     <div class="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-10">
@@ -28,11 +28,21 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
       >
         <div class="relative flex-shrink-0">
           <div
-            class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-slate-100 dark:bg-slate-800 bg-cover bg-center border-2 border-primary/20 flex items-center justify-center"
+            id="student-photo"
+            class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-slate-100 dark:bg-slate-800 bg-cover bg-center border-2 border-primary/20 flex items-center justify-center overflow-hidden"
           >
+            <img
+              id="student-photo-img"
+              src=""
+              alt="Foto de perfil"
+              class="w-full h-full object-cover hidden"
+              onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
+            />
             <span
+              id="student-photo-icon"
               class="material-symbols-outlined text-4xl sm:text-5xl text-slate-400"
-            ></span>
+              >account_circle</span
+            >
           </div>
           <div
             class="absolute -bottom-2 -right-2 bg-primary text-white text-[10px] px-2 py-0.5 sm:py-1 rounded-full font-bold"
@@ -72,6 +82,12 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
               class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"
             >
               Cuatrimestre: --
+            </span>
+            <span
+              id="student-group"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+            >
+              Grupo: --
             </span>
             <span
               id="student-average"
@@ -276,7 +292,7 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
       </button>
     </div>
   </main>
-</PagosLayout>
+</Layout>
 
 <script>
   // Check if user is logged in
@@ -297,7 +313,7 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
   if (dataSourceBadge && dataSourceText) {
     dataSourceBadge.classList.remove("hidden");
     dataSourceBadge.classList.add("inline-flex");
-    if (dataSource === "portal") {
+    if (dataSource === "portal" || dataSource === "sige") {
       dataSourceBadge.classList.add(
         "bg-green-100",
         "dark:bg-green-900/20",
@@ -327,7 +343,11 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
     const studentName = document.getElementById("student-name");
     const studentInfo = document.getElementById("student-info");
     const studentSemester = document.getElementById("student-semester");
+    const studentGroup = document.getElementById("student-group");
     const studentAverage = document.getElementById("student-average");
+    const studentPhotoImg = document.getElementById(
+      "student-photo-img",
+    ) as HTMLImageElement;
     const gpaMessage = document.getElementById("gpa-message");
     const gpaAlert = document.getElementById("gpa-alert");
 
@@ -339,9 +359,26 @@ import PagosLayout from "../../layouts/PagosLayout.astro";
       const carreraName = user.carrera?.nombre || "Carrera no especificada";
       studentInfo.textContent = `ID: ${user.matricula} | ${carreraName}`;
 
-      studentSemester.textContent = `Cuatrimestre: ${user.cuatrimestre || "--"}`;
+      const cuatrimestreValue =
+        user.cuatrimestre && user.cuatrimestre > 0 ? user.cuatrimestre : "--";
+      studentSemester.textContent = `Cuatrimestre: ${cuatrimestreValue}`;
+
+      if (studentGroup) {
+        const grupoValue = user.grupo || "--";
+        studentGroup.textContent = `Grupo: ${grupoValue}`;
+      }
 
       studentAverage.textContent = `Promedio: ${promedio.toFixed(2)}`;
+
+      // Update student photo
+      if (studentPhotoImg && user.foto_url) {
+        const studentPhotoIcon = document.getElementById("student-photo-icon");
+        studentPhotoImg.src = user.foto_url;
+        studentPhotoImg.classList.remove("hidden");
+        if (studentPhotoIcon) {
+          studentPhotoIcon.classList.add("hidden");
+        }
+      }
 
       // Update GPA message
       if (gpaMessage && gpaAlert) {
