@@ -1,0 +1,54 @@
+/* empty css                                    */
+import { e as createComponent, k as renderComponent, l as renderScript, r as renderTemplate, m as maybeRenderHead } from '../../chunks/astro/server_CxmVvn8Q.mjs';
+import 'piccolore';
+import { $ as $$Layout } from '../../chunks/Layout_B6fj8Jt8.mjs';
+export { renderers } from '../../renderers.mjs';
+
+const $$Paso1 = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "UTSH - Portal de Pagos" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<main class="flex-grow flex flex-col items-center justify-start py-8 sm:py-12 px-4 sm:px-6 bg-primary pt-16 sm:pt-20 pb-24 sm:pb-32"> <div class="text-center mb-8 sm:mb-10"> <span class="inline-block px-3 sm:px-4 py-1 bg-white/20 text-white rounded-full text-[10px] font-bold uppercase tracking-widest mb-3 sm:mb-4">Servicios Escolares</span> <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white uppercase tracking-tight px-4">
+Portal de Pagos
+</h2> <p class="text-white/80 mt-3 sm:mt-4 max-w-xl mx-auto text-sm sm:text-base px-4">
+Bienvenido al centro administrativo digital de la UTSH. Gestiona tus
+        pagos y adeudos de forma rápida.
+</p> </div> <!-- Verification Card --> <div class="w-full max-w-xl bg-white dark:bg-zinc-900 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden"> <div class="p-6 sm:p-8 md:p-10"> <div class="flex items-center justify-center gap-3 mb-6"> <div class="bg-emerald-100 p-3 rounded-full"> <span class="material-symbols-outlined text-primary text-2xl sm:text-3xl"></span> </div> </div> <div class="text-center mb-8 sm:mb-10"> <h3 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">
+Acceso a Pagos Mensuales
+</h3> <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm sm:text-base">
+Para acceder a tu información de pagos, debes iniciar sesión con tu
+            matrícula.
+</p> </div> <div class="space-y-4 sm:space-y-6"> <a href="/login?redirect=/pagos-mensuales/paso-2" class="w-full bg-primary hover:bg-primary/90 text-white h-12 sm:h-14 rounded-lg font-bold text-base sm:text-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"> <span class="material-symbols-outlined text-xl sm:text-2xl"></span>
+INICIAR SESIÓN
+</a> <p class="text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+¿No tienes cuenta? Contacta a servicios escolares
+</p> </div> </div> <div class="bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 p-6 sm:p-8 md:p-10"> <div class="flex flex-col gap-4 sm:gap-6"> <div class="flex gap-3 sm:gap-5"> <div class="bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-slate-700 rounded-full p-2 sm:p-3 h-fit flex-shrink-0"> <span class="material-symbols-outlined text-orange-500 text-xl sm:text-2xl"></span> </div> <div> <h4 class="text-slate-800 dark:text-white font-bold text-lg sm:text-xl">
+Información Importante
+</h4> <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm sm:text-base">
+Una vez que inicies sesión, podrás ver tu estado de cuenta,
+                pagos realizados y pendientes.
+</p> </div> </div> </div> </div> </div> <!-- Additional Info --> <div class="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl w-full px-4"> <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center gap-3 sm:gap-4"> <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-primary/30 flex items-center justify-center"> <span class="material-symbols-outlined text-primary text-xl sm:text-2xl"></span> </div> <div> <h5 class="font-bold text-slate-800 dark:text-white uppercase text-xs tracking-widest mb-2">
+Requerimiento
+</h5> <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+Asegúrate de tener tu matrícula vigente a la mano.
+</p> </div> </div> <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center gap-3 sm:gap-4"> <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-primary/30 flex items-center justify-center"> <span class="material-symbols-outlined text-primary text-xl sm:text-2xl"></span> </div> <div> <h5 class="font-bold text-slate-800 dark:text-white uppercase text-xs tracking-widest mb-2">
+Calendario
+</h5> <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+Recuerda realizar tus pagos antes del día 10 de cada mes.
+</p> </div> </div> <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center gap-3 sm:gap-4 sm:col-span-2 md:col-span-1"> <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-primary/30 flex items-center justify-center"> <span class="material-symbols-outlined text-primary text-xl sm:text-2xl"></span> </div> <div> <h5 class="font-bold text-slate-800 dark:text-white uppercase text-xs tracking-widest mb-2">
+Soporte
+</h5> <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+¿Problemas con tu acceso? Contacta a Control Escolar.
+</p> </div> </div> </div> </main> ` })} ${renderScript($$result, "C:/Users/Juan Vahir/Documents/Project/SIGE-PLUS/sige-astro/src/pages/pagos-mensuales/paso-1.astro?astro&type=script&index=0&lang.ts")}`;
+}, "C:/Users/Juan Vahir/Documents/Project/SIGE-PLUS/sige-astro/src/pages/pagos-mensuales/paso-1.astro", void 0);
+
+const $$file = "C:/Users/Juan Vahir/Documents/Project/SIGE-PLUS/sige-astro/src/pages/pagos-mensuales/paso-1.astro";
+const $$url = "/pagos-mensuales/paso-1";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Paso1,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
