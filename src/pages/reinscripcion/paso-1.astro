@@ -1,9 +1,11 @@
 ---
-import ReinscripcionLayout from "../../layouts/ReinscripcionLayout.astro";
+import Layout from "../../layouts/Layout.astro";
 import Stepper from "../../components/Stepper.astro";
+
+const redirect = Astro.url.searchParams.get("redirect");
 ---
 
-<ReinscripcionLayout title="UTSH - Reinscripción Paso 1">
+<Layout title="UTSH - Reinscripción Paso 1">
   <main class="flex-grow flex flex-col items-center justify-start py-10 px-4">
     <div class="w-full max-w-3xl">
       <Stepper currentStep={1} />
@@ -198,14 +200,14 @@ import Stepper from "../../components/Stepper.astro";
       </div>
     </div>
   </main>
-</ReinscripcionLayout>
+</Layout>
 <script>
   // Check if user is authenticated
   const userStr = sessionStorage.getItem("user");
 
   if (!userStr) {
-    // Redirect to login if not authenticated
-    window.location.href = "/login";
+    // Redirect to sige-login if not authenticated
+    window.location.href = "/sige-login?redirect=/reinscripcion/paso-1";
   } else {
     const user = JSON.parse(userStr);
 

@@ -1,5 +1,5 @@
 ---
-import ReinscripcionLayout from "../../layouts/ReinscripcionLayout.astro";
+import Layout from "../../layouts/Layout.astro";
 import Stepper from "../../components/Stepper.astro";
 
 const materias = [
@@ -46,7 +46,7 @@ const materias = [
 ];
 ---
 
-<ReinscripcionLayout title="Portal de Reinscripción - Paso 2">
+<Layout title="Portal de Reinscripción - Paso 2">
   <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
     <Stepper currentStep={2} />
 
@@ -213,7 +213,7 @@ const materias = [
       </a>
     </div>
   </main>
-</ReinscripcionLayout>
+</Layout>
 
 <script>
   // Check if user is authenticated
