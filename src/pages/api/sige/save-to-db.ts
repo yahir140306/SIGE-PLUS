@@ -34,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
     } = data;
 
     // 1. Buscar el estudiante por matrícula en la tabla existente
-    const { data: estudianteExistente, error: errorBusqueda } = await supabase
+    let { data: estudianteExistente, error: errorBusqueda } = await supabase
       .from("estudiantes")
       .select("matricula, nombre, apellido_paterno, apellido_materno")
       .eq("matricula", matricula)
@@ -48,19 +48,68 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!estudianteExistente) {
       console.log("ℹ️ Estudiante no encontrado en la BD");
+      console.log("📝 Creando nuevo estudiante con datos del SIGE...");
+
+      // Parsear nombre completo del SIGE
+      const nombreCompleto = datosPersonales?.nombreCompleto || "";
+      const partesNombre = nombreCompleto.trim().split(/\s+/);
+
+      let nombre = "";
+      let apellidoPaterno = "";
+      let apellidoMaterno = "";
+
+      // Lógica para parsear nombre: asumimos formato "NOMBRE APELLIDO_PATERNO APELLIDO_MATERNO"
+      if (partesNombre.length >= 3) {
+        nombre = partesNombre[0];
+        apellidoPaterno = partesNombre[1];
+        apellidoMaterno = partesNombre.slice(2).join(" ");
+      } else if (partesNombre.length === 2) {
+        nombre = partesNombre[0];
+        apellidoPaterno = partesNombre[1];
+      } else if (partesNombre.length === 1) {
+        nombre = partesNombre[0];
+      }
+
+      // Generar email temporal (requerido por la BD)
+      const emailTemporal = `${matricula}@utsh.edu.mx`;
+
+      // Crear estudiante con campos básicos solamente
+      const { data: nuevoEstudiante, error: errorEstudiante } = await supabase
+        .from("estudiantes")
+        .insert({
+          matricula: matricula,
+          nombre: nombre,
+          apellido_paterno: apellidoPaterno,
+          apellido_materno: apellidoMaterno || null,
+          curp: datosPersonales?.curp || null,
+          email: emailTemporal,
+          password: matricula, // Contraseña por defecto = matrícula
+        })
+        .select()
+        .single();
+
+      if (errorEstudiante) {
+        console.error("❌ Error creando estudiante:", errorEstudiante);
+        throw errorEstudiante;
+      }
+
       console.log(
-        "⚠️ NOTA: No se creará automáticamente porque faltan campos obligatorios",
+        `✅ Estudiante creado: ${nombre} ${apellidoPaterno} ${apellidoMaterno}`,
       );
+      console.log(`📧 Email temporal: ${emailTemporal}`);
       console.log(
-        "   Guárdalo en la tabla estudiantes manualmente si es necesario",
+        `🔑 Contraseña por defecto: ${matricula} (cambiar después del primer login)`,
       );
+
+      // Actualizar referencia al estudiante
+      estudianteExistente = nuevoEstudiante;
     } else {
       const nombreCompleto =
         `${estudianteExistente.nombre} ${estudianteExistente.apellido_paterno} ${estudianteExistente.apellido_materno || ""}`.trim();
       console.log(`✅ Estudiante encontrado: ${nombreCompleto}`);
     }
 
-    // 2. Guardar respaldo completo en formato JSON
+    // 2. Guardar respaldo completo en formato JSON (solo si el estudiante existe)
     const { data: respaldo, error: errorRespaldo } = await supabase
       .from("sige_datos_respaldo")
       .insert({
