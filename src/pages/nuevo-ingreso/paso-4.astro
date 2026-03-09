@@ -1,9 +1,9 @@
 ---
-import NuevoIngresoLayout from "../../layouts/NuevoIngresoLayout.astro";
+import Layout from "../../layouts/Layout.astro";
 import StepperNuevoIngreso from "../../components/StepperNuevoIngreso.astro";
 ---
 
-<NuevoIngresoLayout title="UTSH - Carga de Documentación">
+<Layout title="UTSH - Carga de Documentación">
   <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-5xl mx-auto">
       <!-- Header -->
@@ -62,15 +62,18 @@ import StepperNuevoIngreso from "../../components/StepperNuevoIngreso.astro";
                 >
                   <li>
                     Formato permitido: <span class="font-bold"
-                      >PDF o JPG/JPEG</span>
+                      >PDF o JPG/JPEG</span
+                    >
                   </li>
                   <li>
                     Tamaño máximo: <span class="font-bold"
-                      >5 MB por archivo</span>
+                      >5 MB por archivo</span
+                    >
                   </li>
                   <li>
                     Los documentos deben ser <span class="font-bold"
-                      >legibles y completos</span>
+                      >legibles y completos</span
+                    >
                   </li>
                   <li>
                     No se permiten documentos editables (Word, Excel, etc.)
@@ -409,4 +412,4 @@ import StepperNuevoIngreso from "../../components/StepperNuevoIngreso.astro";
       </div>
     </div>
   </main>
-</NuevoIngresoLayout>
+</Layout>
