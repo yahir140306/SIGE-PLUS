@@ -72,7 +72,7 @@ import Layout from "../../layouts/Layout.astro";
             id="student-info"
             class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
           >
-            ID: -- | --
+            MATRICULA: -- | --
           </p>
           <div
             class="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3"
@@ -357,7 +357,7 @@ import Layout from "../../layouts/Layout.astro";
       studentName.textContent = fullName;
 
       const carreraName = user.carrera?.nombre || "Carrera no especificada";
-      studentInfo.textContent = `ID: ${user.matricula} | ${carreraName}`;
+      studentInfo.textContent = `Matricula: ${user.matricula} | ${carreraName}`;
 
       const cuatrimestreValue =
         user.cuatrimestre && user.cuatrimestre > 0 ? user.cuatrimestre : "--";
@@ -405,7 +405,7 @@ import Layout from "../../layouts/Layout.astro";
           gpaAlert
             .querySelector(".text-secondary")
             ?.classList.add("text-primary");
-          gpaMessage.innerHTML = `¡Felicidades! Tu promedio actual es de <b>${promedio.toFixed(2)}</b>. Tienes derecho a <b>BECA ACADÉMICA</b> del 100% en tus pagos mensuales este cuatrimestre. 🎉`;
+          gpaMessage.innerHTML = `¡Felicidades! Tu promedio actual es de <b>${promedio.toFixed(2)}</b>. Tienes derecho a <b>BECA ACADÉMICA</b> del 100% en tus pagos mensuales este cuatrimestre.`;
         } else {
           gpaMessage.innerHTML = `Tu promedio actual es de <b>${promedio.toFixed(2)}</b>. Para obtener la beca académica del 100%, necesitas un promedio de 9.0 o superior.`;
         }
