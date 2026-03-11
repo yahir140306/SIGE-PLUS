@@ -1,0 +1,218 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Test Proxy de Imágenes">
+  <main class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-8 text-center">
+      Prueba de Proxy de Imágenes SIGE
+    </h1>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-lg">
+      <div class="mb-6">
+        <label
+          for="matricula-input"
+          class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300"
+        >
+          Ingresa una matrícula para probar:
+        </label>
+        <div class="flex gap-2">
+          <input
+            type="text"
+            id="matricula-input"
+            placeholder="Ej: 20240076"
+            class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            value="20240076"
+          />
+          <button
+            id="test-btn"
+            class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-semibold"
+          >
+            Probar
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Resultado del proxy -->
+        <div
+          class="border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+        >
+          <h3 class="font-bold mb-2 text-slate-700 dark:text-slate-300">
+            Imagen desde Proxy API:
+          </h3>
+          <div class="flex items-center gap-4">
+            <div
+              class="w-32 h-32 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center overflow-hidden border-2 border-primary/20"
+            >
+              <img
+                id="proxy-img"
+                src=""
+                alt="Foto desde proxy"
+                class="w-full h-full object-cover hidden"
+              />
+              <span
+                id="proxy-placeholder"
+                class="material-symbols-outlined text-5xl text-slate-400"
+                >account_circle</span
+              >
+            </div>
+            <div class="flex-1">
+              <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                URL: <code
+                  id="proxy-url"
+                  class="text-xs bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded"
+                ></code>
+              </p>
+              <p id="proxy-status" class="text-sm font-medium"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resultado directo (fallará en producción) -->
+        <div
+          class="border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+        >
+          <h3 class="font-bold mb-2 text-slate-700 dark:text-slate-300">
+            Imagen Directa HTTP (debería fallar en HTTPS):
+          </h3>
+          <div class="flex items-center gap-4">
+            <div
+              class="w-32 h-32 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center overflow-hidden border-2 border-red-500/20"
+            >
+              <img
+                id="direct-img"
+                src=""
+                alt="Foto directa"
+                class="w-full h-full object-cover hidden"
+              />
+              <span
+                id="direct-placeholder"
+                class="material-symbols-outlined text-5xl text-slate-400"
+                >account_circle</span
+              >
+            </div>
+            <div class="flex-1">
+              <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                URL: <code
+                  id="direct-url"
+                  class="text-xs bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded"
+                ></code>
+              </p>
+              <p id="direct-status" class="text-sm font-medium"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 text-sm text-slate-500 dark:text-slate-400">
+        <p class="mb-2">
+          <strong>Nota:</strong> En producción (HTTPS), la imagen directa HTTP fallará
+          por "Mixed Content".
+        </p>
+        <p>
+          El proxy API soluciona este problema descargando la imagen desde el
+          servidor y sirviéndola vía HTTPS.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-8 text-center">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 text-primary hover:underline"
+      >
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver al inicio
+      </a>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  const matriculaInput = document.getElementById(
+    "matricula-input",
+  ) as HTMLInputElement;
+  const testBtn = document.getElementById("test-btn");
+
+  const proxyImg = document.getElementById("proxy-img") as HTMLImageElement;
+  const proxyPlaceholder = document.getElementById("proxy-placeholder");
+  const proxyUrl = document.getElementById("proxy-url");
+  const proxyStatus = document.getElementById("proxy-status");
+
+  const directImg = document.getElementById("direct-img") as HTMLImageElement;
+  const directPlaceholder = document.getElementById("direct-placeholder");
+  const directUrl = document.getElementById("direct-url");
+  const directStatus = document.getElementById("direct-status");
+
+  function testImages() {
+    const matricula = matriculaInput.value.trim();
+
+    if (!matricula) {
+      alert("Por favor ingresa una matrícula");
+      return;
+    }
+
+    // Reset
+    proxyImg.classList.add("hidden");
+    proxyPlaceholder?.classList.remove("hidden");
+    directImg.classList.add("hidden");
+    directPlaceholder?.classList.remove("hidden");
+
+    // Test proxy
+    const proxyImageUrl = `/api/sige/proxy-image?matricula=${matricula}`;
+    if (proxyUrl) proxyUrl.textContent = proxyImageUrl;
+    if (proxyStatus) proxyStatus.textContent = "⏳ Cargando...";
+
+    proxyImg.onload = () => {
+      console.log("✅ Proxy image loaded successfully");
+      proxyImg.classList.remove("hidden");
+      proxyPlaceholder?.classList.add("hidden");
+      if (proxyStatus) {
+        proxyStatus.textContent = "✅ Cargada exitosamente";
+        proxyStatus.className = "text-sm font-medium text-green-600";
+      }
+    };
+
+    proxyImg.onerror = (e) => {
+      console.error("❌ Proxy image failed:", e);
+      if (proxyStatus) {
+        proxyStatus.textContent = "❌ Error al cargar";
+        proxyStatus.className = "text-sm font-medium text-red-600";
+      }
+    };
+
+    proxyImg.src = proxyImageUrl;
+
+    // Test direct
+    const directImageUrl = `http://sige.utsh.edu.mx/ctrlfotos/${matricula}.jpg`;
+    if (directUrl) directUrl.textContent = directImageUrl;
+    if (directStatus) directStatus.textContent = "⏳ Cargando...";
+
+    directImg.onload = () => {
+      console.log("✅ Direct image loaded (local only)");
+      directImg.classList.remove("hidden");
+      directPlaceholder?.classList.add("hidden");
+      if (directStatus) {
+        directStatus.textContent = "✅ Cargada (solo funciona en local HTTP)";
+        directStatus.className = "text-sm font-medium text-green-600";
+      }
+    };
+
+    directImg.onerror = (e) => {
+      console.error("❌ Direct image blocked (expected in production):", e);
+      if (directStatus) {
+        directStatus.textContent =
+          "❌ Bloqueada por Mixed Content (esperado en HTTPS)";
+        directStatus.className = "text-sm font-medium text-orange-600";
+      }
+    };
+
+    directImg.src = directImageUrl;
+  }
+
+  testBtn?.addEventListener("click", testImages);
+
+  // Test inicial
+  testImages();
+</script>
