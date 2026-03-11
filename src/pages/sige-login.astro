@@ -429,8 +429,8 @@ import Layout from "../layouts/Layout.astro";
       const calificacionesActuales = extractData.data.calificacionesActuales;
       const adeudos = extractData.data.adeudos;
 
-      // Construir URL de la foto usando la matrícula (usar HTTPS para evitar mixed content)
-      const fotoUrl = `https://sige.utsh.edu.mx/ctrlfotos/${extractData.matricula}.jpg`;
+      // Construir URL de la foto usando el proxy API para evitar mixed content
+      const fotoUrl = `/api/sige/proxy-image?matricula=${extractData.matricula}`;
 
       // Extraer nombre, apellidos del nombreCompleto
       const nombreCompleto = datosPersonales?.nombreCompleto || "";
