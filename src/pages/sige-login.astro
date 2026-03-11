@@ -10,7 +10,11 @@ import Layout from "../layouts/Layout.astro";
       <!-- Instrucciones -->
       <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 mb-6">
         <div class="flex items-start gap-4">
-          <div class="flex-shrink-0"></div>
+          <div class="flex-shrink-0">
+            <span class="material-symbols-outlined text-4xl text-primary"
+              >info</span
+            >
+          </div>
           <div>
             <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">
               Acceso al Portal Oficial SIGE
@@ -69,6 +73,8 @@ import Layout from "../layouts/Layout.astro";
       <div id="alert-container" class="hidden mb-6">
         <div id="alert" class="rounded-2xl shadow-xl p-6">
           <div class="flex items-start gap-4">
+            <span class="material-symbols-outlined text-3xl" id="alert-icon"
+            ></span>
             <div class="flex-1">
               <h3 class="text-lg font-semibold mb-2" id="alert-title"></h3>
               <p class="text-sm" id="alert-message"></p>
@@ -106,6 +112,7 @@ import Layout from "../layouts/Layout.astro";
                 id="btn-open-portal"
                 class="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
+                <span class="material-symbols-outlined">launch</span>
                 Abrir Portal SIGE
               </button>
             </div>
@@ -131,6 +138,7 @@ import Layout from "../layouts/Layout.astro";
                 id="btn-sync"
                 class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
+                <span class="material-symbols-outlined">download</span>
                 Sincronizar Datos
               </button>
             </div>
@@ -196,8 +204,8 @@ import Layout from "../layouts/Layout.astro";
       <!-- Información de seguridad -->
       <div class="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         <p class="flex items-center justify-center gap-2">
-          Tus datos están protegidos y encriptados. Nunca almacenamos tu
-          contraseña.
+          <span class="material-symbols-outlined text-lg">lock</span>
+          Tus datos están protegidos y encriptados. Nunca almacenamos tu contraseña.
         </p>
       </div>
     </div>
@@ -235,10 +243,18 @@ import Layout from "../layouts/Layout.astro";
     title: string,
     message: string,
   ) {
-    const alert = document.getElementById("alert")!;
-    const icon = document.getElementById("alert-icon")!;
-    const titleEl = document.getElementById("alert-title")!;
-    const messageEl = document.getElementById("alert-message")!;
+    const alert = document.getElementById("alert");
+    const icon = document.getElementById("alert-icon");
+    const titleEl = document.getElementById("alert-title");
+    const messageEl = document.getElementById("alert-message");
+
+    // Validar que todos los elementos existan
+    if (!alert || !icon || !titleEl || !messageEl) {
+      console.error(
+        "No se encontraron los elementos necesarios para mostrar la alerta",
+      );
+      return;
+    }
 
     // Configurar estilos según el tipo
     if (type === "success") {
@@ -269,7 +285,10 @@ import Layout from "../layouts/Layout.astro";
 
     titleEl.textContent = title;
     messageEl.textContent = message;
-    alertContainer!.classList.remove("hidden");
+
+    if (alertContainer) {
+      alertContainer.classList.remove("hidden");
+    }
   }
 
   /**
@@ -346,11 +365,17 @@ import Layout from "../layouts/Layout.astro";
   async function syncData(phpsessid: string, matricula?: string) {
     try {
       // Mostrar estado de sincronización
-      syncStatus!.classList.remove("hidden");
-      alertContainer!.classList.add("hidden");
+      if (syncStatus) {
+        syncStatus.classList.remove("hidden");
+      }
+      if (alertContainer) {
+        alertContainer.classList.add("hidden");
+      }
 
       // 1. Extraer datos del SIGE
-      syncMessage!.textContent = "Extrayendo datos del portal SIGE...";
+      if (syncMessage) {
+        syncMessage.textContent = "Extrayendo datos del portal SIGE...";
+      }
 
       const extractResponse = await fetch(EXTRACT_API, {
         method: "POST",
@@ -372,7 +397,9 @@ import Layout from "../layouts/Layout.astro";
       // Datos extraídos exitosamente
 
       // 2. Guardar en base de datos
-      syncMessage!.textContent = "Guardando datos en la base de datos...";
+      if (syncMessage) {
+        syncMessage.textContent = "Guardando datos en la base de datos...";
+      }
 
       const saveResponse = await fetch(SAVE_API, {
         method: "POST",
@@ -392,7 +419,9 @@ import Layout from "../layouts/Layout.astro";
       // Datos guardados exitosamente
 
       // Ocultar sync status
-      syncStatus!.classList.add("hidden");
+      if (syncStatus) {
+        syncStatus.classList.add("hidden");
+      }
 
       // Preparar datos para sessionStorage
       const datosPersonales = extractData.data.datosPersonales;
@@ -400,8 +429,8 @@ import Layout from "../layouts/Layout.astro";
       const calificacionesActuales = extractData.data.calificacionesActuales;
       const adeudos = extractData.data.adeudos;
 
-      // Construir URL de la foto usando la matrícula
-      const fotoUrl = `http://sige.utsh.edu.mx/ctrlfotos/${extractData.matricula}.jpg`;
+      // Construir URL de la foto usando la matrícula (usar HTTPS para evitar mixed content)
+      const fotoUrl = `https://sige.utsh.edu.mx/ctrlfotos/${extractData.matricula}.jpg`;
 
       // Extraer nombre, apellidos del nombreCompleto
       const nombreCompleto = datosPersonales?.nombreCompleto || "";
@@ -490,7 +519,9 @@ import Layout from "../layouts/Layout.astro";
       }, 2000);
     } catch (error) {
       // Error en sincronización
-      syncStatus!.classList.add("hidden");
+      if (syncStatus) {
+        syncStatus.classList.add("hidden");
+      }
       showAlert(
         "error",
         "Error en la sincronización",
