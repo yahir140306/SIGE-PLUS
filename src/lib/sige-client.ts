@@ -19,6 +19,7 @@ interface DatosAlumno {
   grupoIngles: string;
   estatus: string;
   fotoUrl?: string;
+  foto?: string; // Foto en formato base64
   // Contacto
   telefonoRecados?: string;
   nombreRecados?: string;
@@ -168,6 +169,49 @@ export class SigeClient {
   }
 
   /**
+   * Obtiene la foto del estudiante y la convierte a base64
+   */
+  private async getFotoBase64(fotoUrl: string): Promise<string | undefined> {
+    if (!fotoUrl) return undefined;
+
+    try {
+      // Construir URL completa
+      const url = fotoUrl.startsWith("http")
+        ? fotoUrl
+        : `${this.BASE_URL}/${fotoUrl.replace(/^\.\.\//, "")}`;
+
+      console.log(`📷 Descargando foto desde: ${url}`);
+
+      const response = await fetch(url, {
+        headers: {
+          Cookie: `PHPSESSID=${this.phpsessid}`,
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        },
+      });
+
+      if (!response.ok) {
+        console.warn(`⚠️ No se pudo descargar la foto: ${response.status}`);
+        return undefined;
+      }
+
+      const buffer = await response.arrayBuffer();
+      const base64 = Buffer.from(buffer).toString("base64");
+      const mimeType = response.headers.get("content-type") || "image/jpeg";
+
+      const fotoBase64 = `data:${mimeType};base64,${base64}`;
+      console.log(
+        `✅ Foto convertida a base64 (${Math.round(base64.length / 1024)} KB)`,
+      );
+
+      return fotoBase64;
+    } catch (error) {
+      console.error("❌ Error descargando foto:", error);
+      return undefined;
+    }
+  }
+
+  /**
    * Obtiene los datos personales del alumno parseando el HTML real
    */
   async getDatosAlumno(): Promise<DatosAlumno> {
@@ -226,8 +270,11 @@ export class SigeClient {
       const fotoMatch = html.match(/<img src="([^"]+)"/i);
       const fotoUrl = fotoMatch ? fotoMatch[1] : "";
       if (fotoUrl) {
-        console.log(`📷 Foto: ${fotoUrl}`);
+        console.log(`📷 Foto URL: ${fotoUrl}`);
       }
+
+      // Obtener foto en base64
+      const foto = await this.getFotoBase64(fotoUrl);
 
       // Sección de contacto
       console.log("\n📞 ==================== CONTACTO ====================");
@@ -273,6 +320,7 @@ export class SigeClient {
         grupoIngles,
         estatus,
         fotoUrl,
+        foto,
         nombreRecados,
         telefonoRecados,
         telefonoMovil,
