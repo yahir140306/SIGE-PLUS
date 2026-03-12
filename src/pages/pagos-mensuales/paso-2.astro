@@ -304,6 +304,23 @@ import Layout from "../../layouts/Layout.astro";
 
   const user = JSON.parse(userStr);
 
+  // Migrar URL de foto antigua (HTTP directo) a proxy API
+  if (
+    user.foto_url &&
+    user.foto_url.startsWith("http://sige.utsh.edu.mx/ctrlfotos/")
+  ) {
+    const matricula = user.matricula;
+    user.foto_url = `/api/sige/proxy-image?matricula=${matricula}`;
+    sessionStorage.setItem("user", JSON.stringify(user));
+  } else if (
+    user.foto_url &&
+    user.foto_url.startsWith("https://sige.utsh.edu.mx/ctrlfotos/")
+  ) {
+    const matricula = user.matricula;
+    user.foto_url = `/api/sige/proxy-image?matricula=${matricula}`;
+    sessionStorage.setItem("user", JSON.stringify(user));
+  }
+
   // Get data source
   const dataSource = sessionStorage.getItem("dataSource") || "database";
 
@@ -373,11 +390,28 @@ import Layout from "../../layouts/Layout.astro";
       // Update student photo
       if (studentPhotoImg && user.foto_url) {
         const studentPhotoIcon = document.getElementById("student-photo-icon");
+
+        console.log("🖼️ Cargando foto desde:", user.foto_url);
+
+        // Configurar manejadores antes de establecer src
+        studentPhotoImg.onload = () => {
+          console.log("✅ Foto cargada exitosamente");
+          studentPhotoImg.classList.remove("hidden");
+          if (studentPhotoIcon) {
+            studentPhotoIcon.classList.add("hidden");
+          }
+        };
+
+        studentPhotoImg.onerror = () => {
+          console.warn("⚠️ Error al cargar foto, mostrando icono por defecto");
+          studentPhotoImg.classList.add("hidden");
+          if (studentPhotoIcon) {
+            studentPhotoIcon.classList.remove("hidden");
+          }
+        };
+
+        // Establecer src para iniciar la carga
         studentPhotoImg.src = user.foto_url;
-        studentPhotoImg.classList.remove("hidden");
-        if (studentPhotoIcon) {
-          studentPhotoIcon.classList.add("hidden");
-        }
       }
 
       // Update GPA message
