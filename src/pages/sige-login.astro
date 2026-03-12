@@ -228,9 +228,8 @@ import Layout from "../layouts/Layout.astro";
   const btnOpenPortal = document.getElementById("btn-open-portal");
   const btnSync = document.getElementById("btn-sync");
   const btnManualSync = document.getElementById("btn-manual-sync");
-  const manualCookieInput = document.getElementById(
-    "manual-cookie",
-  ) as HTMLInputElement;
+  // prettier-ignore
+  const manualCookieInput = document.getElementById("manual-cookie") as HTMLInputElement;
   const syncStatus = document.getElementById("sync-status");
   const syncMessage = document.getElementById("sync-message");
   const alertContainer = document.getElementById("alert-container");
@@ -250,9 +249,6 @@ import Layout from "../layouts/Layout.astro";
 
     // Validar que todos los elementos existan
     if (!alert || !icon || !titleEl || !messageEl) {
-      console.error(
-        "No se encontraron los elementos necesarios para mostrar la alerta",
-      );
       return;
     }
 
@@ -429,8 +425,8 @@ import Layout from "../layouts/Layout.astro";
       const calificacionesActuales = extractData.data.calificacionesActuales;
       const adeudos = extractData.data.adeudos;
 
-      // Construir URL de la foto usando el proxy API para evitar mixed content
-      const fotoUrl = `/api/sige/proxy-image?matricula=${extractData.matricula}`;
+      // Construir URL de la foto usando la matrícula (usar HTTPS para evitar mixed content)
+      const fotoUrl = `https://sige.utsh.edu.mx/ctrlfotos/${extractData.matricula}.jpg`;
 
       // Extraer nombre, apellidos del nombreCompleto
       const nombreCompleto = datosPersonales?.nombreCompleto || "";
