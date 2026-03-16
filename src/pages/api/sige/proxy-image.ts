@@ -1,8 +1,11 @@
 import type { APIRoute } from "astro";
+import { supabase } from "../../../lib/supabase";
+import { SigeClient, sessionManager } from "../../../lib/sige-client";
 
 /**
  * Proxy para imágenes del SIGE
- * Descarga la imagen desde HTTP y la sirve a través de HTTPS
+ * Primero intenta obtener la foto desde la base de datos
+ * Si no está disponible, descarga desde el servidor SIGE
  * Incluye retry logic y timeout extendido para conexiones lentas
  */
 
@@ -89,7 +92,119 @@ export const GET: APIRoute = async ({ url }) => {
 
     console.log(`[Proxy Image] Obteniendo foto para matrícula: ${matricula}`);
 
-    // URL de la foto en el servidor SIGE (HTTP)
+    // 1. Primero intentar obtener la foto desde la base de datos
+    try {
+      const { data: respaldo, error: errorRespaldo } = await supabase
+        .from("sige_datos_respaldo")
+        .select("datos_personales")
+        .eq("matricula", matricula)
+        .order("fecha_sincronizacion", { ascending: false })
+        .limit(1)
+        .single();
+
+      console.log("[Proxy Image] Resultado consulta BD:", {
+        error: errorRespaldo,
+        tieneRespaldo: !!respaldo,
+        tieneDatosPersonales: !!respaldo?.datos_personales,
+        tieneFoto: !!respaldo?.datos_personales?.foto,
+        longitudFoto: respaldo?.datos_personales?.foto?.length,
+      });
+
+      if (!errorRespaldo && respaldo?.datos_personales?.foto) {
+        const fotoBase64 = respaldo.datos_personales.foto;
+        console.log(
+          `[Proxy Image] ✅ Foto encontrada en base de datos (${fotoBase64.length} caracteres)`,
+        );
+
+        // La foto está en formato "data:image/jpeg;base64,..."
+        // Extraer el tipo MIME y los datos base64
+        const matches = fotoBase64.match(/^data:([^;]+);base64,(.+)$/);
+        if (matches) {
+          const mimeType = matches[1];
+          const base64Data = matches[2];
+          const imageBuffer = Buffer.from(base64Data, "base64");
+
+          console.log(
+            `[Proxy Image] Retornando foto (${imageBuffer.byteLength} bytes, tipo: ${mimeType})`,
+          );
+
+          return new Response(imageBuffer, {
+            status: 200,
+            headers: {
+              "Content-Type": mimeType,
+              "Cache-Control":
+                "public, max-age=86400, stale-while-revalidate=604800",
+              "Access-Control-Allow-Origin": "*",
+              "X-Content-Type-Options": "nosniff",
+            },
+          });
+        } else {
+          console.warn(
+            "[Proxy Image] ⚠️ Foto no tiene formato data URI válido",
+          );
+        }
+      }
+    } catch (dbError) {
+      console.warn(
+        "[Proxy Image] ⚠️ Error consultando base de datos:",
+        dbError,
+      );
+      // Continuar al método alternativo
+    }
+
+    // 2. Si no está en la BD, intentar extraer foto base64 usando una sesión SIGE activa
+    const activeSession = sessionManager.getSession(matricula);
+    if (activeSession) {
+      try {
+        console.log(
+          "[Proxy Image] Intentando obtener foto con sesión SIGE activa...",
+        );
+
+        const sigeClient = new SigeClient(activeSession);
+        const datosAlumno = await sigeClient.getDatosAlumno();
+
+        if (datosAlumno?.foto?.startsWith("data:")) {
+          const matches = datosAlumno.foto.match(/^data:([^;]+);base64,(.+)$/);
+
+          if (matches) {
+            const mimeType = matches[1];
+            const base64Data = matches[2];
+            const imageBuffer = Buffer.from(base64Data, "base64");
+
+            console.log(
+              `[Proxy Image] ✅ Foto obtenida desde sesión SIGE (${imageBuffer.byteLength} bytes, tipo: ${mimeType})`,
+            );
+
+            return new Response(imageBuffer, {
+              status: 200,
+              headers: {
+                "Content-Type": mimeType,
+                "Cache-Control":
+                  "public, max-age=86400, stale-while-revalidate=604800",
+                "Access-Control-Allow-Origin": "*",
+                "X-Content-Type-Options": "nosniff",
+              },
+            });
+          }
+        }
+
+        console.warn(
+          "[Proxy Image] ⚠️ Sesión SIGE activa encontrada, pero sin foto base64 válida",
+        );
+      } catch (sessionError) {
+        console.warn(
+          "[Proxy Image] ⚠️ No se pudo extraer foto usando sesión SIGE:",
+          sessionError,
+        );
+      }
+    } else {
+      console.log(
+        "[Proxy Image] No hay sesión SIGE activa para esta matrícula. Omitiendo extracción en vivo.",
+      );
+    }
+
+    // 3. Fallback legacy: intentar desde la URL antigua del servidor SIGE
+    console.log("[Proxy Image] Intentando fallback legacy por URL JPG...");
     const imageUrl = `http://sige.utsh.edu.mx/ctrlfotos/${matricula}.jpg`;
 
     // Descargar la imagen con retry logic
