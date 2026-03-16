@@ -174,6 +174,12 @@ export class SigeClient {
   private async getFotoBase64(fotoUrl: string): Promise<string | undefined> {
     if (!fotoUrl) return undefined;
 
+    // Si la foto ya está en formato base64 (data URI), retornarla directamente
+    if (fotoUrl.startsWith("data:")) {
+      console.log("📷 Foto ya está en formato base64");
+      return fotoUrl;
+    }
+
     try {
       // Construir URL completa
       const url = fotoUrl.startsWith("http")
