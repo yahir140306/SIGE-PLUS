@@ -150,9 +150,10 @@ import Layout from "../../layouts/Layout.astro";
         class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
       >
         <h3
+          id="payment-period"
           class="font-bold text-base sm:text-lg text-slate-800 dark:text-slate-100"
         >
-          Periodo: Enero - Abril 2026
+          Periodo de pagos
         </h3>
         <div
           class="flex items-center gap-2 text-[11px] sm:text-xs font-medium text-slate-500"
@@ -210,6 +211,63 @@ import Layout from "../../layouts/Layout.astro";
         class="md:hidden divide-y divide-slate-100 dark:divide-slate-800"
       >
         <!-- Payment cards will be loaded here dynamically -->
+      </div>
+    </div>
+
+    <!-- Monthly Grades Cutoff -->
+    <div
+      class="mt-6 sm:mt-8 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden"
+    >
+      <div
+        class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2"
+      >
+        <h3
+          class="font-bold text-base sm:text-lg text-slate-800 dark:text-slate-100"
+        >
+          Corte de Caja: Calificaciones del Mes
+        </h3>
+        <p
+          id="monthly-grades-average"
+          class="text-xs sm:text-sm font-semibold text-primary"
+        >
+          Promedio del corte: --
+        </p>
+      </div>
+
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-slate-50 dark:bg-slate-800/50">
+            <tr>
+              <th
+                class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider"
+                >Asignatura</th
+              >
+              <th
+                class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider"
+                >Unidad</th
+              >
+              <th
+                class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider"
+                >Calificación</th
+              >
+              <th
+                class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider"
+                >Fecha de registro</th
+              >
+            </tr>
+          </thead>
+          <tbody
+            id="monthly-grades-table"
+            class="divide-y divide-slate-100 dark:divide-slate-800"
+          >
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        id="monthly-grades-mobile"
+        class="md:hidden divide-y divide-slate-100 dark:divide-slate-800"
+      >
       </div>
     </div>
 
@@ -356,7 +414,18 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   // Función para actualizar la información del estudiante
-  function updateStudentInfo(promedio: number) {
+  function updateStudentInfo(options: {
+    promedioHistorico: number;
+    promedioMes: number;
+    totalUnidadesMes: number;
+    tieneBecaMensual: boolean;
+  }) {
+    const {
+      promedioHistorico,
+      promedioMes,
+      totalUnidadesMes,
+      tieneBecaMensual,
+    } = options;
     const studentName = document.getElementById("student-name");
     const studentInfo = document.getElementById("student-info");
     const studentSemester = document.getElementById("student-semester");
@@ -385,7 +454,7 @@ import Layout from "../../layouts/Layout.astro";
         studentGroup.textContent = `Grupo: ${grupoValue}`;
       }
 
-      studentAverage.textContent = `Promedio: ${promedio.toFixed(2)}`;
+      studentAverage.textContent = `Promedio mes: ${promedioMes.toFixed(2)}`;
 
       // Update student photo
       if (studentPhotoImg && user.foto_url) {
@@ -416,7 +485,9 @@ import Layout from "../../layouts/Layout.astro";
 
       // Update GPA message
       if (gpaMessage && gpaAlert) {
-        if (promedio >= 9.0) {
+        if (totalUnidadesMes === 0) {
+          gpaMessage.innerHTML = `Este mes aún no hay unidades calificadas para calcular beca académica. Tu promedio histórico es <b>${promedioHistorico.toFixed(2)}</b>.`;
+        } else if (tieneBecaMensual) {
           gpaAlert.classList.remove(
             "bg-secondary/5",
             "dark:bg-secondary/10",
@@ -439,12 +510,583 @@ import Layout from "../../layouts/Layout.astro";
           gpaAlert
             .querySelector(".text-secondary")
             ?.classList.add("text-primary");
-          gpaMessage.innerHTML = `¡Felicidades! Tu promedio actual es de <b>${promedio.toFixed(2)}</b>. Tienes derecho a <b>BECA ACADÉMICA</b> del 100% en tus pagos mensuales este cuatrimestre.`;
+          gpaMessage.innerHTML = `¡Felicidades! Con <b>${totalUnidadesMes}</b> unidades calificadas este mes, tu promedio es <b>${promedioMes.toFixed(2)}</b>. Se aplica <b>BECA ACADÉMICA 100%</b> en el pago mensual actual.`;
         } else {
-          gpaMessage.innerHTML = `Tu promedio actual es de <b>${promedio.toFixed(2)}</b>. Para obtener la beca académica del 100%, necesitas un promedio de 9.0 o superior.`;
+          gpaMessage.innerHTML = `Con <b>${totalUnidadesMes}</b> unidades calificadas este mes, tu promedio es <b>${promedioMes.toFixed(2)}</b>. Para obtener la beca académica del 100% mensual necesitas <b>9.0 o superior</b>.`;
         }
       }
     }
+  }
+
+  function monthName(date: Date): string {
+    return date.toLocaleDateString("es-MX", { month: "long" });
+  }
+
+  function monthShort(date: Date): string {
+    return date.toLocaleDateString("es-MX", { month: "short" });
+  }
+
+  interface UnidadEvaluadaMes {
+    asignatura: string;
+    unidad: string;
+    evaluacion: number;
+    fechaSincronizacion: string;
+  }
+
+  interface PaymentRow {
+    id: string;
+    mes: string;
+    fecha: string;
+    concepto: string;
+    monto: number;
+    montoOriginal: number;
+    estado: "pagado" | "pendiente" | "proximo";
+    tieneBeca: boolean;
+    recargo: number;
+    diasRetraso: number;
+    totalPagar: number;
+    fechaLimiteISO: string;
+    fechaPagoISO?: string;
+  }
+
+  interface ReceiptData {
+    folio: string;
+    matricula: string;
+    alumno: string;
+    concepto: string;
+    fechaEmision: string;
+    montoBase: number;
+    recargo: number;
+    total: number;
+    paymentId: string;
+  }
+
+  const DEFAULT_MONTO_MENSUAL = 250;
+  const DEFAULT_RECARGO_DIARIO = 5;
+  const DEFAULT_DIA_LIMITE = 12;
+
+  const paymentsState: PaymentRow[] = [];
+  const receiptsStore = new Map<string, ReceiptData>();
+
+  let paymentConfig = {
+    montoBase: DEFAULT_MONTO_MENSUAL,
+    recargoDiario: DEFAULT_RECARGO_DIARIO,
+    diaLimitePago: DEFAULT_DIA_LIMITE,
+  };
+
+  function formatMoney(value: number): string {
+    return `$${value.toFixed(2)}`;
+  }
+
+  function formatDateLong(dateIso: string): string {
+    return new Date(dateIso).toLocaleString("es-MX", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function startOfDay(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  function calculateLateFee(
+    dueDate: Date,
+    tieneBeca: boolean,
+    estado: "pagado" | "pendiente" | "proximo",
+  ) {
+    if (tieneBeca || estado !== "pendiente") {
+      return { diasRetraso: 0, recargo: 0 };
+    }
+
+    const today = startOfDay(new Date());
+    const due = startOfDay(dueDate);
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const diffDays = Math.floor((today.getTime() - due.getTime()) / msPerDay);
+    const diasRetraso = Math.max(diffDays, 0);
+
+    return {
+      diasRetraso,
+      recargo: diasRetraso * paymentConfig.recargoDiario,
+    };
+  }
+
+  function buildPaymentRows(tieneBecaMensual: boolean): PaymentRow[] {
+    const now = new Date();
+
+    const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    const duePrevious = new Date(
+      previousMonth.getFullYear(),
+      previousMonth.getMonth(),
+      paymentConfig.diaLimitePago,
+    );
+    const dueCurrent = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      paymentConfig.diaLimitePago,
+    );
+    const dueNext = new Date(
+      nextMonth.getFullYear(),
+      nextMonth.getMonth(),
+      paymentConfig.diaLimitePago,
+    );
+
+    const { diasRetraso, recargo } = calculateLateFee(
+      dueCurrent,
+      tieneBecaMensual,
+      "pendiente",
+    );
+
+    const fechaLimiteActual = `${paymentConfig.diaLimitePago} / ${monthShort(currentMonth)} / ${currentMonth.getFullYear()}`;
+    const fechaLimiteAnterior = `${paymentConfig.diaLimitePago} / ${monthShort(previousMonth)} / ${previousMonth.getFullYear()}`;
+    const fechaLimiteSiguiente = `${paymentConfig.diaLimitePago} / ${monthShort(nextMonth)} / ${nextMonth.getFullYear()}`;
+
+    const montoActual = tieneBecaMensual ? 0 : paymentConfig.montoBase;
+
+    return [
+      {
+        id: "pago-mes-anterior",
+        mes: monthName(previousMonth),
+        fecha: fechaLimiteAnterior,
+        concepto: "Mensualidad del mes anterior",
+        monto: paymentConfig.montoBase,
+        montoOriginal: paymentConfig.montoBase,
+        estado: "pagado",
+        tieneBeca: false,
+        recargo: 0,
+        diasRetraso: 0,
+        totalPagar: paymentConfig.montoBase,
+        fechaLimiteISO: duePrevious.toISOString(),
+      },
+      {
+        id: "pago-mes-actual",
+        mes: monthName(currentMonth),
+        fecha: fechaLimiteActual,
+        concepto: "Mensualidad actual",
+        monto: montoActual,
+        montoOriginal: paymentConfig.montoBase,
+        estado: "pendiente",
+        tieneBeca: tieneBecaMensual,
+        recargo,
+        diasRetraso,
+        totalPagar: montoActual + recargo,
+        fechaLimiteISO: dueCurrent.toISOString(),
+      },
+      {
+        id: "pago-mes-proximo",
+        mes: monthName(nextMonth),
+        fecha: fechaLimiteSiguiente,
+        concepto: "Mensualidad próxima",
+        monto: paymentConfig.montoBase,
+        montoOriginal: paymentConfig.montoBase,
+        estado: "proximo",
+        tieneBeca: false,
+        recargo: 0,
+        diasRetraso: 0,
+        totalPagar: paymentConfig.montoBase,
+        fechaLimiteISO: dueNext.toISOString(),
+      },
+    ];
+  }
+
+  function renderMonthlyGrades(
+    unidadesMes: UnidadEvaluadaMes[],
+    promedioMes: number,
+  ) {
+    const averageEl = document.getElementById("monthly-grades-average");
+    const gradesTable = document.getElementById("monthly-grades-table");
+    const gradesMobile = document.getElementById("monthly-grades-mobile");
+
+    if (averageEl) {
+      averageEl.textContent = `Promedio del corte: ${promedioMes.toFixed(2)}`;
+    }
+
+    if (!gradesTable || !gradesMobile) {
+      return;
+    }
+
+    if (!unidadesMes || unidadesMes.length === 0) {
+      gradesTable.innerHTML = `
+        <tr>
+          <td colspan="4" class="px-6 py-4 text-sm text-slate-500">No hay calificaciones de unidad registradas en este mes para el corte de caja.</td>
+        </tr>
+      `;
+      gradesMobile.innerHTML = `
+        <div class="p-4 text-xs text-slate-500">No hay calificaciones de unidad registradas en este mes para el corte de caja.</div>
+      `;
+      return;
+    }
+
+    gradesTable.innerHTML = unidadesMes
+      .map(
+        (unidad) => `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+            <td class="px-6 py-3 text-sm text-slate-700 dark:text-slate-200">${unidad.asignatura}</td>
+            <td class="px-6 py-3 text-sm text-slate-500">${unidad.unidad}</td>
+            <td class="px-6 py-3 text-sm font-semibold text-slate-800 dark:text-slate-100">${Number(unidad.evaluacion).toFixed(2)}</td>
+            <td class="px-6 py-3 text-sm text-slate-500">${formatDateLong(unidad.fechaSincronizacion)}</td>
+          </tr>
+        `,
+      )
+      .join("");
+
+    gradesMobile.innerHTML = unidadesMes
+      .map(
+        (unidad) => `
+          <div class="p-4">
+            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">${unidad.asignatura}</p>
+            <p class="text-xs text-slate-500 mt-1">Unidad: ${unidad.unidad}</p>
+            <p class="text-xs text-slate-500">Calificación: <span class="font-semibold text-slate-700 dark:text-slate-200">${Number(unidad.evaluacion).toFixed(2)}</span></p>
+            <p class="text-xs text-slate-500">Registro: ${formatDateLong(unidad.fechaSincronizacion)}</p>
+          </div>
+        `,
+      )
+      .join("");
+  }
+
+  function buildReceipt(payment: PaymentRow): ReceiptData {
+    const fullName =
+      `${user.nombre} ${user.apellido_paterno} ${user.apellido_materno || ""}`.trim();
+
+    return {
+      folio: `RCB-${Date.now().toString().slice(-8)}`,
+      matricula: user.matricula,
+      alumno: fullName,
+      concepto: payment.concepto,
+      fechaEmision: new Date().toISOString(),
+      montoBase: payment.montoOriginal,
+      recargo: payment.recargo,
+      total: payment.totalPagar,
+      paymentId: payment.id,
+    };
+  }
+
+  function openReceipt(receipt: ReceiptData) {
+    const receiptWindow = window.open("", "_blank", "width=420,height=640");
+    if (!receiptWindow) {
+      alert(
+        "No se pudo abrir el recibo. Verifica que el navegador permita ventanas emergentes.",
+      );
+      return;
+    }
+
+    const recargoLabel =
+      receipt.recargo > 0 ? formatMoney(receipt.recargo) : "$0.00";
+
+    receiptWindow.document.write(`
+      <!DOCTYPE html>
+      <html lang="es">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Recibo de Pago ${receipt.folio}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 16px; color: #0f172a; }
+            .box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; }
+            .title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+            .row { display: flex; justify-content: space-between; margin: 6px 0; font-size: 13px; }
+            .total { margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 8px; font-weight: 700; }
+            .foot { margin-top: 12px; font-size: 11px; color: #64748b; }
+            .btn { margin-top: 12px; padding: 8px 10px; border: 0; border-radius: 6px; background: #0f766e; color: white; cursor: pointer; }
+          </style>
+        </head>
+        <body>
+          <div class="box">
+            <div class="title">Recibo de Pago Mensual UTSH</div>
+            <div class="row"><span>Folio:</span><span>${receipt.folio}</span></div>
+            <div class="row"><span>Matrícula:</span><span>${receipt.matricula}</span></div>
+            <div class="row"><span>Alumno:</span><span>${receipt.alumno}</span></div>
+            <div class="row"><span>Concepto:</span><span>${receipt.concepto}</span></div>
+            <div class="row"><span>Fecha:</span><span>${formatDateLong(receipt.fechaEmision)}</span></div>
+            <div class="row"><span>Monto base:</span><span>${formatMoney(receipt.montoBase)}</span></div>
+            <div class="row"><span>Recargo:</span><span>${recargoLabel}</span></div>
+            <div class="row total"><span>Total pagado:</span><span>${formatMoney(receipt.total)}</span></div>
+            <button class="btn" onclick="window.print()">Imprimir recibo</button>
+            <div class="foot">Documento generado automáticamente por el portal de pagos.</div>
+          </div>
+        </body>
+      </html>
+    `);
+    receiptWindow.document.close();
+  }
+
+  function ensureReceiptForPaid(payment: PaymentRow) {
+    if (receiptsStore.has(payment.id)) {
+      return;
+    }
+
+    const defaultReceipt: ReceiptData = {
+      folio: `RCB-HIST-${payment.id}`,
+      matricula: user.matricula,
+      alumno:
+        `${user.nombre} ${user.apellido_paterno} ${user.apellido_materno || ""}`.trim(),
+      concepto: payment.concepto,
+      fechaEmision: payment.fechaPagoISO || new Date().toISOString(),
+      montoBase: payment.montoOriginal,
+      recargo: payment.recargo,
+      total: payment.totalPagar,
+      paymentId: payment.id,
+    };
+
+    receiptsStore.set(payment.id, defaultReceipt);
+  }
+
+  function renderPaymentsData() {
+    const paymentPeriodEl = document.getElementById("payment-period");
+    if (paymentPeriodEl && paymentsState.length >= 3) {
+      paymentPeriodEl.textContent = `Periodo: ${paymentsState[0].mes} - ${paymentsState[2].mes}`;
+    }
+
+    const paidCount = paymentsState.filter((p) => p.estado === "pagado").length;
+    const pendingCount = paymentsState.filter(
+      (p) => p.estado === "pendiente",
+    ).length;
+
+    const paidCountEl = document.getElementById("paid-count");
+    const pendingCountEl = document.getElementById("pending-count");
+    if (paidCountEl) paidCountEl.textContent = String(paidCount);
+    if (pendingCountEl) pendingCountEl.textContent = String(pendingCount);
+
+    for (const payment of paymentsState) {
+      if (payment.estado === "pagado") {
+        ensureReceiptForPaid(payment);
+      }
+    }
+
+    const paymentsTable = document.getElementById("payments-table");
+    if (paymentsTable) {
+      paymentsTable.innerHTML = paymentsState
+        .map((payment) => {
+          let statusHtml = "";
+          let actionHtml = "";
+          let montoHtml = "";
+
+          if (payment.tieneBeca) {
+            montoHtml = `
+              <div class="flex flex-col items-start">
+                <span class="text-xs text-slate-400 line-through">${formatMoney(payment.montoOriginal)}</span>
+                <span class="font-bold text-primary">$0.00</span>
+                <span class="text-[10px] text-primary font-bold">BECA 100%</span>
+              </div>
+            `;
+          } else {
+            montoHtml = `
+              <div class="flex flex-col items-start">
+                <span class="font-bold text-slate-900 dark:text-slate-100">${formatMoney(payment.monto)}</span>
+                ${payment.recargo > 0 ? `<span class="text-[10px] text-red-600">+ ${formatMoney(payment.recargo)} recargo (${payment.diasRetraso} días)</span>` : ""}
+                ${payment.recargo > 0 ? `<span class="text-[10px] font-semibold text-red-700">Total: ${formatMoney(payment.totalPagar)}</span>` : ""}
+              </div>
+            `;
+          }
+
+          if (payment.estado === "pagado") {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PAGADO
+            </span>
+          `;
+            actionHtml = `
+            <button type="button" data-action="view-receipt" data-payment-id="${payment.id}" class="text-secondary hover:text-secondary/80 font-bold text-xs flex items-center gap-1 ml-auto transition-colors">
+              <span class="material-symbols-outlined text-sm"></span>
+              Ver Recibo
+            </button>
+          `;
+          } else if (payment.estado === "pendiente") {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PENDIENTE
+            </span>
+          `;
+            if (payment.tieneBeca) {
+              actionHtml = `
+                <button class="bg-primary/10 text-primary border border-primary/30 px-4 py-1.5 rounded-lg text-xs font-bold cursor-default" disabled>
+                  Beca aplicada (sin pago)
+                </button>
+              `;
+            } else {
+              actionHtml = `
+                <button type="button" data-action="pay" data-payment-id="${payment.id}" class="bg-maroon hover:bg-maroon/90 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm">
+                  Pagar y generar recibo
+                </button>
+              `;
+            }
+          } else {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PRÓXIMO
+            </span>
+          `;
+            actionHtml = `
+            <button class="bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 px-4 py-1.5 rounded-lg text-xs font-bold cursor-not-allowed" disabled>
+              Generar Referencia
+            </button>
+          `;
+          }
+
+          return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+            <td class="px-6 py-4">
+              <span class="font-semibold text-slate-900 dark:text-slate-100">${payment.mes}</span>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">${payment.fecha}</td>
+            <td class="px-6 py-4 text-sm text-slate-500">${payment.concepto}</td>
+            <td class="px-6 py-4">${montoHtml}</td>
+            <td class="px-6 py-4 text-center">${statusHtml}</td>
+            <td class="px-6 py-4 text-right">${actionHtml}</td>
+          </tr>
+        `;
+        })
+        .join("");
+    }
+
+    const paymentsMobile = document.getElementById("payments-mobile");
+    if (paymentsMobile) {
+      paymentsMobile.innerHTML = paymentsState
+        .map((payment) => {
+          let statusHtml = "";
+          let actionHtml = "";
+          let montoHtml = "";
+
+          if (payment.tieneBeca) {
+            montoHtml = `
+              <div class="flex flex-col items-end">
+                <span class="text-xs text-slate-400 line-through">${formatMoney(payment.montoOriginal)}</span>
+                <span class="font-bold text-primary">$0.00</span>
+                <span class="text-[10px] text-primary font-bold">BECA 100%</span>
+              </div>
+            `;
+          } else {
+            montoHtml = `
+              <div class="flex flex-col items-end">
+                <span class="font-bold text-slate-900 dark:text-slate-100">${formatMoney(payment.monto)}</span>
+                ${payment.recargo > 0 ? `<span class="text-[10px] text-red-600">+ ${formatMoney(payment.recargo)} (${payment.diasRetraso} días)</span>` : ""}
+                ${payment.recargo > 0 ? `<span class="text-[10px] font-semibold text-red-700">Total: ${formatMoney(payment.totalPagar)}</span>` : ""}
+              </div>
+            `;
+          }
+
+          if (payment.estado === "pagado") {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PAGADO
+            </span>
+          `;
+            actionHtml = `
+            <button type="button" data-action="view-receipt" data-payment-id="${payment.id}" class="w-full text-secondary hover:text-secondary/80 font-bold text-xs flex items-center justify-center gap-2 py-2 transition-colors">
+              <span class="material-symbols-outlined text-sm"></span>
+              Ver Recibo
+            </button>
+          `;
+          } else if (payment.estado === "pendiente") {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PENDIENTE
+            </span>
+          `;
+            if (payment.tieneBeca) {
+              actionHtml = `
+                <button class="w-full bg-primary/10 text-primary border border-primary/30 py-2 rounded-lg text-xs font-bold cursor-default" disabled>
+                  Beca aplicada (sin pago)
+                </button>
+              `;
+            } else {
+              actionHtml = `
+                <button type="button" data-action="pay" data-payment-id="${payment.id}" class="w-full bg-maroon hover:bg-maroon/90 text-white py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
+                  Pagar y generar recibo
+                </button>
+              `;
+            }
+          } else {
+            statusHtml = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
+              <span class="material-symbols-outlined text-[14px] font-bold"></span>
+              PRÓXIMO
+            </span>
+          `;
+            actionHtml = `
+            <button class="w-full bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 py-2 rounded-lg text-xs font-bold cursor-not-allowed" disabled>
+              Generar Referencia
+            </button>
+          `;
+          }
+
+          return `
+          <div class="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h4 class="font-semibold text-slate-900 dark:text-slate-100 text-sm">${payment.mes}</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${payment.fecha}</p>
+              </div>
+              ${statusHtml}
+            </div>
+            <div class="space-y-2 mb-3">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500 dark:text-slate-400">Concepto:</span>
+                <span class="text-slate-700 dark:text-slate-300">${payment.concepto}</span>
+              </div>
+              <div class="flex justify-between text-xs items-end">
+                <span class="text-slate-500 dark:text-slate-400">Monto:</span>
+                ${montoHtml}
+              </div>
+            </div>
+            ${actionHtml}
+          </div>
+        `;
+        })
+        .join("");
+    }
+  }
+
+  function payCurrentMonth(paymentId: string) {
+    const payment = paymentsState.find((p) => p.id === paymentId);
+    if (!payment || payment.estado !== "pendiente" || payment.tieneBeca) {
+      return;
+    }
+
+    payment.estado = "pagado";
+    payment.fechaPagoISO = new Date().toISOString();
+
+    const receipt = buildReceipt(payment);
+    receiptsStore.set(payment.id, receipt);
+
+    renderPaymentsData();
+    openReceipt(receipt);
+  }
+
+  function openStoredReceipt(paymentId: string) {
+    const receipt = receiptsStore.get(paymentId);
+    if (!receipt) {
+      return;
+    }
+    openReceipt(receipt);
+  }
+
+  function loadPaymentsData(
+    tieneBecaMensual: boolean = false,
+    pagoMensualData: any = null,
+  ) {
+    paymentConfig = {
+      montoBase: Number(pagoMensualData?.montoBase ?? DEFAULT_MONTO_MENSUAL),
+      recargoDiario: Number(
+        pagoMensualData?.recargoDiario ?? DEFAULT_RECARGO_DIARIO,
+      ),
+      diaLimitePago: Number(
+        pagoMensualData?.diaLimitePago ?? DEFAULT_DIA_LIMITE,
+      ),
+    };
+
+    const freshRows = buildPaymentRows(tieneBecaMensual);
+    paymentsState.splice(0, paymentsState.length, ...freshRows);
+    renderPaymentsData();
   }
 
   // Función para cargar datos académicos del SIGE
@@ -489,11 +1131,36 @@ import Layout from "../../layouts/Layout.astro";
           dataSourceText.textContent = "Datos del SIGE";
         }
 
-        // Actualizar información con el promedio real del SIGE
-        updateStudentInfo(data.academico.promedioGeneral);
+        const promedioHistorico = Number(
+          data.academico.promedioGeneralHistorico ??
+            data.academico.promedioGeneral ??
+            0,
+        );
+        const promedioMes = Number(
+          data.academico.promedioUnidadesMes ?? promedioHistorico,
+        );
+        const totalUnidadesMes = Number(data.academico.totalUnidadesMes ?? 0);
+        const tieneBecaMensual = Boolean(
+          data.academico.tieneBecaAcademicaMensual ??
+          data.academico.tieneBecaAcademica,
+        );
+
+        // Actualizar información con el cálculo mensual de unidades
+        updateStudentInfo({
+          promedioHistorico,
+          promedioMes,
+          totalUnidadesMes,
+          tieneBecaMensual,
+        });
 
         // Actualizar tabla de pagos con información de beca
-        loadPaymentsData(data.academico.tieneBecaAcademica);
+        loadPaymentsData(tieneBecaMensual, data.pagoMensual);
+
+        // Mostrar calificaciones del mes para corte de caja
+        const unidadesMes = Array.isArray(data.academico.unidadesEvaluadasMes)
+          ? (data.academico.unidadesEvaluadasMes as UnidadEvaluadaMes[])
+          : [];
+        renderMonthlyGrades(unidadesMes, promedioMes);
 
         // Guardar datos académicos en sessionStorage para uso posterior
         sessionStorage.setItem("academicData", JSON.stringify(data));
@@ -501,254 +1168,58 @@ import Layout from "../../layouts/Layout.astro";
         console.warn("⚠️ No hay datos del SIGE, usando datos locales");
         // Usar promedio local si no hay datos del SIGE
         const promedio = user.promedio || 0;
-        updateStudentInfo(promedio);
-        loadPaymentsData(promedio >= 9.0);
+        updateStudentInfo({
+          promedioHistorico: promedio,
+          promedioMes: promedio,
+          totalUnidadesMes: 0,
+          tieneBecaMensual: false,
+        });
+        loadPaymentsData(false, null);
+        renderMonthlyGrades([], promedio);
       }
     } catch (error) {
       console.error("❌ Error cargando datos académicos:", error);
       // Fallback a datos locales
       const promedio = user.promedio || 0;
-      updateStudentInfo(promedio);
-      loadPaymentsData(promedio >= 9.0);
+      updateStudentInfo({
+        promedioHistorico: promedio,
+        promedioMes: promedio,
+        totalUnidadesMes: 0,
+        tieneBecaMensual: false,
+      });
+      loadPaymentsData(false, null);
+      renderMonthlyGrades([], promedio);
     }
   }
 
   // Cargar datos al iniciar
   loadAcademicData();
 
-  // Load payments data
-  function loadPaymentsData(tieneBeca: boolean = false) {
-    const montoBase = 2450;
-    const montoConBeca = tieneBeca ? 0 : montoBase; // 100% de descuento si tiene beca
+  document.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+    const actionButton = target.closest(
+      "button[data-action]",
+    ) as HTMLButtonElement | null;
 
-    const paymentsData = [
-      {
-        mes: "Enero",
-        fecha: "15 / Ene / 2026",
-        concepto: "Mensualidad #1",
-        monto: montoConBeca,
-        montoOriginal: montoBase,
-        estado: "pagado",
-        tieneBeca: tieneBeca,
-      },
-      {
-        mes: "Febrero",
-        fecha: "15 / Feb / 2026",
-        concepto: "Mensualidad #2",
-        monto: montoConBeca,
-        montoOriginal: montoBase,
-        estado: "pagado",
-        tieneBeca: tieneBeca,
-      },
-      {
-        mes: "Marzo",
-        fecha: "15 / Mar / 2026",
-        concepto: "Mensualidad #3",
-        monto: montoConBeca,
-        montoOriginal: montoBase,
-        estado: "pendiente",
-        tieneBeca: tieneBeca,
-      },
-      {
-        mes: "Abril",
-        fecha: "15 / Abr / 2026",
-        concepto: "Mensualidad #4",
-        monto: montoConBeca,
-        montoOriginal: montoBase,
-        estado: "proximo",
-        tieneBeca: tieneBeca,
-      },
-    ];
-
-    // Count payments
-    const paidCount = paymentsData.filter((p) => p.estado === "pagado").length;
-    const pendingCount = paymentsData.filter(
-      (p) => p.estado === "pendiente",
-    ).length;
-
-    const paidCountEl = document.getElementById("paid-count");
-    const pendingCountEl = document.getElementById("pending-count");
-    if (paidCountEl) paidCountEl.textContent = String(paidCount);
-    if (pendingCountEl) pendingCountEl.textContent = String(pendingCount);
-
-    // Render desktop table
-    const paymentsTable = document.getElementById("payments-table");
-    if (paymentsTable) {
-      paymentsTable.innerHTML = paymentsData
-        .map((payment) => {
-          let statusHtml = "";
-          let actionHtml = "";
-          let montoHtml = "";
-
-          if (payment.tieneBeca) {
-            montoHtml = `
-              <div class="flex flex-col items-start">
-                <span class="text-xs text-slate-400 line-through">$${payment.montoOriginal.toFixed(2)}</span>
-                <span class="font-bold text-primary">$0.00</span>
-                <span class="text-[10px] text-primary font-bold">BECA 100%</span>
-              </div>
-            `;
-          } else {
-            montoHtml = `<span class="font-bold text-slate-900 dark:text-slate-100">$${payment.monto.toFixed(2)}</span>`;
-          }
-
-          if (payment.estado === "pagado") {
-            statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
-              <span class="material-symbols-outlined text-[14px] font-bold"></span>
-              PAGADO
-            </span>
-          `;
-            actionHtml = `
-            <button class="text-secondary hover:text-secondary/80 font-bold text-xs flex items-center gap-1 ml-auto transition-colors">
-              <span class="material-symbols-outlined text-sm"></span>
-              Ver Recibo
-            </button>
-          `;
-          } else if (payment.estado === "pendiente") {
-            statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
-              <span class="material-symbols-outlined text-[14px] font-bold"></span>
-              PENDIENTE
-            </span>
-          `;
-            if (payment.tieneBeca) {
-              actionHtml = `
-                <button class="bg-primary hover:bg-primary/90 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm">
-                  Confirmar Matrícula
-                </button>
-              `;
-            } else {
-              actionHtml = `
-                <button class="bg-maroon hover:bg-maroon/90 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm">
-                  Generar Referencia
-                </button>
-              `;
-            }
-          } else {
-            statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
-              <span class="material-symbols-outlined text-[14px] font-bold"></span>
-              PRÓXIMO
-            </span>
-          `;
-            actionHtml = `
-            <button class="bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 px-4 py-1.5 rounded-lg text-xs font-bold cursor-not-allowed" disabled>
-              Generar Referencia
-            </button>
-          `;
-          }
-
-          return `
-          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-            <td class="px-6 py-4">
-              <span class="font-semibold text-slate-900 dark:text-slate-100">${payment.mes}</span>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-500">${payment.fecha}</td>
-            <td class="px-6 py-4 text-sm text-slate-500">${payment.concepto}</td>
-            <td class="px-6 py-4">${montoHtml}</td>
-            <td class="px-6 py-4 text-center">${statusHtml}</td>
-            <td class="px-6 py-4 text-right">${actionHtml}</td>
-          </tr>
-        `;
-        })
-        .join("");
+    if (!actionButton) {
+      return;
     }
 
-    // Render mobile cards
-    const paymentsMobile = document.getElementById("payments-mobile");
-    if (paymentsMobile) {
-      paymentsMobile.innerHTML = paymentsData
-        .map((payment) => {
-          let statusHtml = "";
-          let actionHtml = "";
-          let montoHtml = "";
+    const action = actionButton.dataset.action;
+    const paymentId = actionButton.dataset.paymentId;
 
-          if (payment.tieneBeca) {
-            montoHtml = `
-              <div class="flex flex-col items-end">
-                <span class="text-xs text-slate-400 line-through">$${payment.montoOriginal.toFixed(2)}</span>
-                <span class="font-bold text-primary">$0.00</span>
-                <span class="text-[10px] text-primary font-bold">BECA 100%</span>
-              </div>
-            `;
-          } else {
-            montoHtml = `<span class="font-bold text-slate-900 dark:text-slate-100">$${payment.monto.toFixed(2)}</span>`;
-          }
-
-          if (payment.estado === "pagado") {
-            statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
-              <span class="material-symbols-outlined text-[14px] font-bold"></span>
-              PAGADO
-            </span>
-          `;
-            actionHtml = `
-            <button class="w-full text-secondary hover:text-secondary/80 font-bold text-xs flex items-center justify-center gap-2 py-2 transition-colors">
-              <span class="material-symbols-outlined text-sm"></span>
-              Ver Recibo
-            </button>
-          `;
-          } else if (payment.estado === "pendiente") {
-            statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
-              <span class="material-symbols-outlined text-[14px] font-bold"></span>
-              PENDIENTE
-            </span>
-          `;
-            if (payment.tieneBeca) {
-              actionHtml = `
-                <button class="w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
-                  Confirmar Matrícula
-                </button>
-              `;
-            } else {
-              actionHtml = `
-                <button class="w-full bg-maroon hover:bg-maroon/90 text-white py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
-                  Generar Referencia
-                </button>
-              `;
-            }
-          } else {
-            statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
-              <span class="material-symbols-outlined text-[14px] font-bold"></span>
-              PRÓXIMO
-            </span>
-          `;
-            actionHtml = `
-            <button class="w-full bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 py-2 rounded-lg text-xs font-bold cursor-not-allowed" disabled>
-              Generar Referencia
-            </button>
-          `;
-          }
-
-          return `
-          <div class="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-            <div class="flex justify-between items-start mb-3">
-              <div>
-                <h4 class="font-semibold text-slate-900 dark:text-slate-100 text-sm">${payment.mes}</h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${payment.fecha}</p>
-              </div>
-              ${statusHtml}
-            </div>
-            <div class="space-y-2 mb-3">
-              <div class="flex justify-between text-xs">
-                <span class="text-slate-500 dark:text-slate-400">Concepto:</span>
-                <span class="text-slate-700 dark:text-slate-300">${payment.concepto}</span>
-              </div>
-              <div class="flex justify-between text-xs items-end">
-                <span class="text-slate-500 dark:text-slate-400">Monto:</span>
-                ${montoHtml}
-              </div>
-            </div>
-            ${actionHtml}
-          </div>
-        `;
-        })
-        .join("");
+    if (!action || !paymentId) {
+      return;
     }
-  }
+
+    if (action === "pay") {
+      payCurrentMonth(paymentId);
+    }
+
+    if (action === "view-receipt") {
+      openStoredReceipt(paymentId);
+    }
+  });
 
   // Logout functionality
   const logoutBtn = document.getElementById("logout-btn");
