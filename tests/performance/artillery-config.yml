@@ -1,0 +1,63 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 30
+      arrivalRate: 5
+      name: "Ramp up to 5 req/sec"
+    - duration: 90
+      arrivalRate: 5
+      name: "Hold at 5 req/sec"
+    - duration: 30
+      arrivalRate: 0
+      name: "Ramp down"
+  defaults:
+    headers:
+      User-Agent: Artillery/Load-Tester
+      Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+  processor: "./tests/performance/artillery-processor.js"
+
+scenarios:
+  - name: "API Load Test"
+    flow:
+      - get:
+          url: /
+          expect:
+            - statusCode: 200
+      - think: 1
+      - get:
+          url: /sige-login
+          expect:
+            - statusCode: 200
+      - think: 1
+      - get:
+          url: /api/sige/academic-data?matricula=2021004562
+          expect:
+            - statusCode: [200, 404]
+      - think: 1
+      - get:
+          url: /api/pagos-mensuales/obtener-pagos?matricula=2021004562&meses=6
+          expect:
+            - statusCode: 200
+      - think: 1
+      - get:
+          url: /api/sige/proxy-image?matricula=2021004562
+          expect:
+            - statusCode: 200
+      - think: 2
+
+  - name: "Payment Registration"
+    weight: 25
+    flow:
+      - post:
+          url: /api/pagos-mensuales/registrar-pago
+          json:
+            matricula: "2021004562"
+            mes: "Enero 2026"
+            montoBase: 250
+            recargo: 0
+            totalPagar: 250
+            concepto: "Inscripción"
+            folio: "RCB-{{ $randomNumber(1000000, 9999999) }}"
+          expect:
+            - statusCode: [201, 500]
+      - think: 2
