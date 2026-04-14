@@ -270,6 +270,8 @@ export const POST: APIRoute = async ({ request }) => {
           materias_historial: materiasGuardadas,
           calificaciones_actuales: calificacionesActuales?.length || 0,
           adeudos: adeudosGuardados,
+          materias: materiasGuardadas,
+          calificaciones: calificacionesActuales?.length || 0,
         },
         nota: !estudianteExistente
           ? "El estudiante no existe en la BD. Datos guardados en respaldo JSON."
