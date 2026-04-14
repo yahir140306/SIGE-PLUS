@@ -14,7 +14,7 @@ export const options = {
 };
 
 export default function () {
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = process.env.BASE_URL || "http://localhost:4321";
 
   // Test homepage
   const homeRes = http.get(`${baseUrl}/`);
