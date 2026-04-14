@@ -150,7 +150,7 @@ export class SigeClient {
         const cells: string[] = [];
         for (const cellMatch of cellMatches) {
           // Limpiar HTML interno y espacios
-          let cellText = cellMatch[1]
+          const cellText = cellMatch[1]
             .replace(/<[^>]+>/g, " ") // Reemplazar tags con espacio
             .replace(/&nbsp;/g, " ")
             .replace(/\s+/g, " ") // Normalizar espacios
