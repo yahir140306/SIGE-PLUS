@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("API Testing - Critical Flows", () => {
-  const baseURL = "http://localhost:3000";
+const baseURL = process.env.BASE_URL || "http://localhost:4321";
 
+test.describe("API Testing - Critical Flows", () => {
   test.describe("POST /api/sige/extract-data", () => {
     test("debe retornar error 400 sin phpsessid", async ({ request }) => {
       const response = await request.post(`${baseURL}/api/sige/extract-data`, {
