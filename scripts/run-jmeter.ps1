@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$baseUrl = if ($env:BASE_URL) { $env:BASE_URL } else { "http://localhost:3000" }
+$baseUrl = if ($env:BASE_URL) { $env:BASE_URL } else { "http://localhost:4321" }
 $testPlan = "tests/performance/jmeter-test-plan.jmx"
 $resultsDir = "reports/jmeter"
 $resultFile = Join-Path $resultsDir "results.jtl"

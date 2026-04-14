@@ -11,13 +11,14 @@ import dotenv from "dotenv";
 // Cargar variables de entorno
 dotenv.config();
 
-const SUPABASE_URL = process.env.PUBLIC_SUPABASE_URL;
-const SUPABASE_KEY = process.env.PUBLIC_SUPABASE_ANON_KEY;
-const SUPABASE_ADMIN_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_URL =
+  process.env.SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL;
+const SUPABASE_ADMIN_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ADMIN_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_ADMIN_KEY) {
   console.error(
-    "❌ Error: Variables de entorno no encontradas.\nAsegúrate de tener PUBLIC_SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY en .env",
+    "❌ Error: Variables de entorno no encontradas.\nAsegúrate de tener SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY en .env",
   );
   process.exit(1);
 }
@@ -124,7 +125,7 @@ async function setupDatabase() {
     console.log("   GET   /api/pagos-mensuales/obtener-pagos - Cargar pagos\n");
 
     console.log("✅ Próximo paso: Prueba la funcionalidad en:");
-    console.log("   http://localhost:3000/pagos-mensuales/paso-2\n");
+    console.log("   http://localhost:4321/pagos-mensuales/paso-2\n");
 
     process.exit(0);
   } catch (error) {
