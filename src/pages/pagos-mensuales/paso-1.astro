@@ -165,6 +165,12 @@ import Layout from "../../layouts/Layout.astro";
   </main>
 </Layout>
 
+<style>
+  .material-symbols-outlined {
+    display: none !important;
+  }
+</style>
+
 <script>
   // Check if user is already logged in
   const user = sessionStorage.getItem("user");

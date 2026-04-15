@@ -38,12 +38,6 @@ import Layout from "../../layouts/Layout.astro";
               class="w-full h-full object-cover hidden"
               onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
             />
-            <div
-              id="student-photo-icon"
-              class="text-4xl sm:text-5xl text-slate-400 font-bold"
-            >
-              👤
-            </div>
           </div>
           <div
             class="absolute -bottom-2 -right-2 bg-primary text-white text-[10px] px-2 py-0.5 sm:py-1 rounded-full font-bold"
@@ -61,13 +55,11 @@ import Layout from "../../layouts/Layout.astro";
             >
               Cargando...
             </h2>
-            <span
+            <div
               id="data-source-badge"
-              class="hidden items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
+              class="hidden items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
             >
-              <!-- Icono aquí -->
-              <span id="data-source-text"></span>
-            </span>
+            </div>
           </div>
           <p
             id="student-info"
@@ -102,16 +94,14 @@ import Layout from "../../layouts/Layout.astro";
           class="flex flex-col sm:flex-row lg:flex-col gap-2 w-full sm:w-auto"
         >
           <button
-            class="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all"
+            class="flex items-center justify-center bg-primary hover:bg-primary/90 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all"
           >
-            <!-- Icono aquí -->
             Estado de Cuenta
           </button>
           <button
             id="logout-btn"
-            class="flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all"
+            class="flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all"
           >
-            <!-- Icono aquí -->
             Cerrar Sesión
           </button>
         </div>
@@ -122,23 +112,16 @@ import Layout from "../../layouts/Layout.astro";
         id="gpa-alert"
         class="bg-secondary/5 dark:bg-secondary/10 rounded-xl border border-secondary/20 p-4 sm:p-6 flex flex-col justify-center"
       >
-        <div class="flex items-start gap-3 sm:gap-4">
-          <div
-            class="bg-secondary/20 p-2 rounded-lg text-secondary flex-shrink-0"
+        <div>
+          <h3 class="font-bold text-secondary mb-1 text-xs sm:text-sm">
+            Aviso de Beca
+          </h3>
+          <p
+            id="gpa-message"
+            class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 leading-relaxed"
           >
-            <!-- Icono aquí -->
-          </div>
-          <div>
-            <h3 class="font-bold text-secondary mb-1 text-xs sm:text-sm">
-              Aviso de Beca
-            </h3>
-            <p
-              id="gpa-message"
-              class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 leading-relaxed"
-            >
-              Cargando información...
-            </p>
-          </div>
+            Cargando información...
+          </p>
         </div>
       </div>
     </div>
@@ -277,65 +260,42 @@ import Layout from "../../layouts/Layout.astro";
       <div
         class="flex-1 bg-maroon/5 dark:bg-maroon/10 rounded-xl p-4 sm:p-6 border border-maroon/10"
       >
-        <div class="flex gap-3 sm:gap-4">
-          <span class="text-maroon text-xl sm:text-2xl flex-shrink-0 font-bold"
-            >❓</span
+        <div>
+          <h4 class="font-bold text-maroon text-xs sm:text-sm mb-1">
+            ¿Dudas con tus pagos?
+          </h4>
+          <p
+            class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mb-2 sm:mb-3 leading-relaxed"
           >
-          <div>
-            <h4 class="font-bold text-maroon text-xs sm:text-sm mb-1">
-              ¿Dudas con tus pagos?
-            </h4>
-            <p
-              class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mb-2 sm:mb-3 leading-relaxed"
-            >
-              Si has realizado un pago y no se refleja en el sistema, favor de
-              acudir a la oficina de finanzas con tu comprobante original.
-            </p>
-            <a
-              class="text-[11px] sm:text-xs font-bold text-maroon underline"
-              href="#">Contactar a soporte</a
-            >
-          </div>
+            Si has realizado un pago y no se refleja en el sistema, favor de
+            acudir a la oficina de finanzas con tu comprobante original.
+          </p>
+          <a
+            class="text-[11px] sm:text-xs font-bold text-maroon underline"
+            href="#">Contactar a soporte</a
+          >
         </div>
       </div>
       <div
         class="flex-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700"
       >
-        <div class="flex gap-3 sm:gap-4">
-          <span
-            class="text-slate-500 text-xl sm:text-2xl flex-shrink-0 font-bold"
-            >💳</span
+        <div>
+          <h4
+            class="font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm mb-1"
           >
-          <div>
-            <h4
-              class="font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm mb-1"
-            >
-              Métodos de Pago
-            </h4>
-            <p
-              class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mb-2 sm:mb-3 leading-relaxed"
-            >
-              Puedes realizar tu pago en ventanilla bancaria (BBVA), cajeros
-              inteligentes o vía transferencia electrónica con tu referencia
-              única.
-            </p>
-            <div class="flex gap-2">
-              <div
-                class="h-6 w-10 bg-white dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 flex items-center justify-center text-[10px] font-bold text-slate-400"
-              >
-                VISA
-              </div>
-              <div
-                class="h-6 w-10 bg-white dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 flex items-center justify-center text-[10px] font-bold text-slate-400"
-              >
-                MC
-              </div>
-              <div
-                class="h-6 w-10 bg-white dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 flex items-center justify-center text-[10px] font-bold text-slate-400"
-              >
-                SPEI
-              </div>
-            </div>
+            Métodos de Pago
+          </h4>
+          <p
+            class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mb-2 sm:mb-3 leading-relaxed"
+          >
+            Puedes realizar tu pago en ventanilla bancaria (BBVA), cajeros
+            inteligentes o vía transferencia electrónica con tu referencia
+            única.
+          </p>
+          <div class="flex gap-2 text-[11px] font-semibold text-slate-500">
+            <div>VISA</div>
+            <div>MC</div>
+            <div>SPEI</div>
           </div>
         </div>
       </div>
@@ -345,9 +305,8 @@ import Layout from "../../layouts/Layout.astro";
     <div class="mt-6 sm:mt-8 text-center">
       <button
         id="back-btn"
-        class="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm sm:text-base"
+        class="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-lg border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm sm:text-base"
       >
-        <!-- Icono aquí -->
         Regresar
       </button>
     </div>
@@ -363,6 +322,11 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   const user = JSON.parse(userStr);
+
+  // Use local no-op loggers to avoid third-party console instrumentation issues.
+  const debugLog = (..._args: unknown[]) => {};
+  const debugWarn = (..._args: unknown[]) => {};
+  const debugError = (..._args: unknown[]) => {};
 
   // Migrar URL de foto antigua (HTTP directo) a proxy API
   if (
@@ -386,8 +350,7 @@ import Layout from "../../layouts/Layout.astro";
 
   // Show data source badge
   const dataSourceBadge = document.getElementById("data-source-badge");
-  const dataSourceText = document.getElementById("data-source-text");
-  if (dataSourceBadge && dataSourceText) {
+  if (dataSourceBadge) {
     dataSourceBadge.classList.remove("hidden");
     dataSourceBadge.classList.add("inline-flex");
     if (dataSource === "portal" || dataSource === "sige") {
@@ -400,7 +363,7 @@ import Layout from "../../layouts/Layout.astro";
         "border-green-200",
         "dark:border-green-800",
       );
-      dataSourceText.textContent = "Portal Oficial";
+      dataSourceBadge.textContent = "Portal Oficial";
     } else {
       dataSourceBadge.classList.add(
         "bg-blue-100",
@@ -411,7 +374,7 @@ import Layout from "../../layouts/Layout.astro";
         "border-blue-200",
         "dark:border-blue-800",
       );
-      dataSourceText.textContent = "Base de Datos";
+      dataSourceBadge.textContent = "Base de Datos";
     }
   }
 
@@ -460,25 +423,17 @@ import Layout from "../../layouts/Layout.astro";
 
       // Update student photo
       if (studentPhotoImg && user.foto_url) {
-        const studentPhotoIcon = document.getElementById("student-photo-icon");
-
-        console.log("🖼️ Cargando foto desde:", user.foto_url);
+        debugLog("Cargando foto desde:", user.foto_url);
 
         // Configurar manejadores antes de establecer src
         studentPhotoImg.onload = () => {
-          console.log("✅ Foto cargada exitosamente");
+          debugLog("Foto cargada exitosamente");
           studentPhotoImg.classList.remove("hidden");
-          if (studentPhotoIcon) {
-            studentPhotoIcon.classList.add("hidden");
-          }
         };
 
         studentPhotoImg.onerror = () => {
-          console.warn("⚠️ Error al cargar foto, mostrando icono por defecto");
+          debugWarn("Error al cargar foto, mostrando icono por defecto");
           studentPhotoImg.classList.add("hidden");
-          if (studentPhotoIcon) {
-            studentPhotoIcon.classList.remove("hidden");
-          }
         };
 
         // Establecer src para iniciar la carga
@@ -763,7 +718,7 @@ import Layout from "../../layouts/Layout.astro";
     receipt: ReceiptData,
   ): Promise<boolean> {
     try {
-      console.log(`💾 Guardando pago ${payment.id} en BD...`);
+      debugLog(`Guardando pago ${payment.id} en BD...`);
 
       const response = await fetch(`/api/pagos-mensuales/registrar-pago`, {
         method: "POST",
@@ -783,11 +738,11 @@ import Layout from "../../layouts/Layout.astro";
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("❌ Error guardando pago:", errorData);
+        debugError("Error guardando pago:", errorData);
 
         // Si es error de tabla no encontrada, mostrar alerta informativa
         if (errorData.code === "TABLE_NOT_FOUND") {
-          console.warn(
+          debugWarn(
             "⚠️ Tabla de pagos no configurada. Contacta al administrador.",
           );
           // No interrumpir el flujo, permitir que el recibo se termine de mostrar
@@ -798,10 +753,10 @@ import Layout from "../../layouts/Layout.astro";
       }
 
       const result = await response.json();
-      console.log("✅ Pago guardado en BD:", result);
+      debugLog("Pago guardado en BD:", result);
       return true;
     } catch (error) {
-      console.error("❌ Error en savePaymentToDB:", error);
+      debugError("Error en savePaymentToDB:", error);
       // No lanzar error para no interrumpir el flujo del recibo
       return false;
     }
@@ -812,7 +767,7 @@ import Layout from "../../layouts/Layout.astro";
    */
   async function loadPaymentsFromDB(matricula: string): Promise<void> {
     try {
-      console.log(`📂 Cargando pagos guardados para ${matricula}...`);
+      debugLog(`Cargando pagos guardados para ${matricula}...`);
 
       const response = await fetch(
         `/api/pagos-mensuales/obtener-pagos?matricula=${matricula}&meses=12`,
@@ -825,11 +780,11 @@ import Layout from "../../layouts/Layout.astro";
       const result = await response.json();
 
       if (!result.success || !result.pagos || result.pagos.length === 0) {
-        console.log("ℹ️ No hay pagos guardados en BD");
+        debugLog("No hay pagos guardados en BD");
         return;
       }
 
-      console.log(`✅ Se encontraron ${result.pagos.length} pagos guardados`);
+      debugLog(`Se encontraron ${result.pagos.length} pagos guardados`);
 
       // Cargar los pagos guardados en paymentsState
       for (const savedPayment of result.pagos) {
@@ -861,15 +816,13 @@ import Layout from "../../layouts/Layout.astro";
           };
 
           receiptsStore.set(paymentInState.id, reconstructedReceipt);
-          console.log(
-            `✅ Recibo ${savedPayment.folio_recibo} cargado en memoria`,
-          );
+          debugLog(`✅ Recibo ${savedPayment.folio_recibo} cargado en memoria`);
         }
       }
 
       renderPaymentsData();
     } catch (error) {
-      console.error(
+      debugError(
         "⚠️ Error cargando pagos guardados (continuando sin BD):",
         error,
       );
@@ -1013,8 +966,7 @@ import Layout from "../../layouts/Layout.astro";
 
           if (payment.estado === "pagado") {
             statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
-              ✓
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
               PAGADO
             </span>
           `;
@@ -1026,8 +978,7 @@ import Layout from "../../layouts/Layout.astro";
           `;
           } else if (payment.estado === "pendiente") {
             statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
-              ⏳
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
               PENDIENTE
             </span>
           `;
@@ -1046,8 +997,7 @@ import Layout from "../../layouts/Layout.astro";
             }
           } else {
             statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
-              —
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
               PRÓXIMO
             </span>
           `;
@@ -1102,8 +1052,7 @@ import Layout from "../../layouts/Layout.astro";
 
           if (payment.estado === "pagado") {
             statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
-              ✓
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
               PAGADO
             </span>
           `;
@@ -1115,8 +1064,7 @@ import Layout from "../../layouts/Layout.astro";
           `;
           } else if (payment.estado === "pendiente") {
             statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
-              ⏳
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 text-secondary border border-secondary/20">
               PENDIENTE
             </span>
           `;
@@ -1135,8 +1083,7 @@ import Layout from "../../layouts/Layout.astro";
             }
           } else {
             statusHtml = `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
-              —
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
               PRÓXIMO
             </span>
           `;
@@ -1189,9 +1136,9 @@ import Layout from "../../layouts/Layout.astro";
     // Guardar el pago en la base de datos
     savePaymentToDB(payment, receipt).then((savedSuccessfully) => {
       if (savedSuccessfully) {
-        console.log("✅ Pago guardado en BD, mostrando recibo...");
+        debugLog("Pago guardado en BD, mostrando recibo...");
       } else {
-        console.warn(
+        debugWarn(
           "⚠️ El pago no se guardó en BD, pero se mostrará el recibo de todas formas",
         );
       }
@@ -1230,7 +1177,7 @@ import Layout from "../../layouts/Layout.astro";
   // Función para cargar datos académicos del SIGE
   async function loadAcademicData() {
     try {
-      console.log("📊 Cargando datos académicos del SIGE...");
+      debugLog("Cargando datos académicos del SIGE...");
 
       const response = await fetch(
         `/api/sige/academic-data?matricula=${user.matricula}`,
@@ -1243,12 +1190,11 @@ import Layout from "../../layouts/Layout.astro";
       const data = await response.json();
 
       if (data.success && data.academico) {
-        console.log("✅ Datos académicos cargados:", data);
+        debugLog("Datos académicos cargados:", data);
 
         // Actualizar badge de fuente de datos a SIGE
         const dataSourceBadge = document.getElementById("data-source-badge");
-        const dataSourceText = document.getElementById("data-source-text");
-        if (dataSourceBadge && dataSourceText) {
+        if (dataSourceBadge) {
           dataSourceBadge.classList.remove(
             "bg-blue-100",
             "dark:bg-blue-900/20",
@@ -1266,7 +1212,7 @@ import Layout from "../../layouts/Layout.astro";
             "border-green-200",
             "dark:border-green-800",
           );
-          dataSourceText.textContent = "Datos del SIGE";
+          dataSourceBadge.textContent = "Datos del SIGE";
         }
 
         const promedioHistorico = Number(
@@ -1306,7 +1252,7 @@ import Layout from "../../layouts/Layout.astro";
         // Cargar pagos guardados en BD después de cargar datos académicos
         await loadPaymentsFromDB(user.matricula);
       } else {
-        console.warn("⚠️ No hay datos del SIGE, usando datos locales");
+        debugWarn("No hay datos del SIGE, usando datos locales");
         // Usar promedio local si no hay datos del SIGE
         const promedio = user.promedio || 0;
         updateStudentInfo({
@@ -1322,7 +1268,7 @@ import Layout from "../../layouts/Layout.astro";
         await loadPaymentsFromDB(user.matricula);
       }
     } catch (error) {
-      console.error("❌ Error cargando datos académicos:", error);
+      debugError("Error cargando datos académicos:", error);
       // Fallback a datos locales
       const promedio = user.promedio || 0;
       updateStudentInfo({
