@@ -107,8 +107,7 @@ const redirect = Astro.url.searchParams.get("redirect");
                   >
                   <span
                     id="periodo-reinscripcion"
-                    class="text-primary font-black"
-                    >Cargando...</span
+                    class="text-primary font-black">Cargando...</span
                   >
                 </div>
               </div>
@@ -221,8 +220,18 @@ const redirect = Astro.url.searchParams.get("redirect");
     </div>
   </main>
 </Layout>
+
+<style>
+  .material-symbols-outlined {
+    display: none !important;
+  }
+</style>
+
 <script>
-  import { getPeriodoActual, getPeriodoSiguiente } from "../../lib/periodo-utils";
+  import {
+    getPeriodoActual,
+    getPeriodoSiguiente,
+  } from "../../lib/periodo-utils";
 
   // Check if user is authenticated
   const userStr = sessionStorage.getItem("user");
@@ -242,7 +251,9 @@ const redirect = Astro.url.searchParams.get("redirect");
     const nombreEl = document.getElementById("nombre");
     const carreraEl = document.getElementById("carrera");
     const periodoEl = document.getElementById("periodo");
-    const periodoReinscripcionEl = document.getElementById("periodo-reinscripcion");
+    const periodoReinscripcionEl = document.getElementById(
+      "periodo-reinscripcion",
+    );
     const alertPayment = document.getElementById("alert-payment");
 
     if (matriculaEl) {
