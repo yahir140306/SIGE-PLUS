@@ -1,12 +1,10 @@
 /**
- * API: Guardar cookie del SIGE y extraer datos
- *
- * Esta API recibe la cookie PHPSESSID capturada desde el frontend
- * y la usa para obtener todos los datos del estudiante del portal SIGE
+ * API: Extraer datos del SIGE mediante cookie PHPSESSID
+ * Utiliza AuthService para mantener la coherencia y normalización de datos.
  */
 
 import type { APIRoute } from "astro";
-import { SigeClient, sessionManager } from "../../../lib/sige-client";
+import { AuthService } from "../../../lib/auth-service";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -19,43 +17,24 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    console.log("🍪 Cookie PHPSESSID recibida");
-    console.log("📋 Matrícula:", matricula || "No proporcionada");
+    const result = await AuthService.loginWithCookie(phpsessid, matricula);
 
-    // Crear cliente del SIGE con la cookie
-    const sigeClient = new SigeClient(phpsessid);
-
-    // Verificar que la sesión sea válida
-    console.log("🔐 Verificando validez de la sesión...");
-    const sesionValida = await sigeClient.verificarSesion();
-
-    if (!sesionValida) {
+    if (!result.success) {
       return new Response(
         JSON.stringify({
-          error: "La sesión del SIGE no es válida o ha expirado",
+          error: result.error || "La sesión del SIGE no es válida o ha expirado",
           code: "INVALID_SESSION",
         }),
         { status: 401, headers: { "Content-Type": "application/json" } },
       );
     }
 
-    console.log("✅ Sesión válida. Extrayendo datos...");
-
-    // Extraer todos los datos del estudiante
-    // getAllData() ya muestra todo el detalle en consola
-    const allData = await sigeClient.getAllData();
-
-    // Guardar la sesión para uso futuro
-    const matriculaExtraida = allData.datosPersonales.matricula || matricula;
-    if (matriculaExtraida) {
-      sessionManager.saveSession(matriculaExtraida, phpsessid);
-    }
-
     return new Response(
       JSON.stringify({
         success: true,
-        data: allData,
-        matricula: matriculaExtraida,
+        data: result.data,
+        user: result.user,
+        matricula: result.matricula,
       }),
       {
         status: 200,
@@ -64,7 +43,6 @@ export const POST: APIRoute = async ({ request }) => {
     );
   } catch (error) {
     console.error("❌ Error procesando cookie del SIGE:", error);
-
     return new Response(
       JSON.stringify({
         error: "Error al extraer datos del portal SIGE",

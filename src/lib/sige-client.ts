@@ -59,11 +59,96 @@ interface HistorialAcademico {
 }
 
 export class SigeClient {
-  private readonly BASE_URL = "http://sige.utsh.edu.mx/estudiantes";
+  private readonly BASE_URL = "https://sige.utsh.edu.mx/estudiantes";
   private phpsessid: string;
 
   constructor(phpsessid: string) {
     this.phpsessid = phpsessid;
+  }
+
+  /**
+   * Inicia sesión directamente en el portal oficial del SIGE usando matrícula y contraseña.
+   * Intercepta la redirección y extrae automáticamente la cookie de sesión PHPSESSID.
+   */
+  static async login(
+    matricula: string,
+    password: string,
+  ): Promise<{ success: boolean; phpsessid?: string; error?: string }> {
+    try {
+      if (!matricula || !password) {
+        return {
+          success: false,
+          error: "Matrícula y contraseña son requeridas.",
+        };
+      }
+
+      const loginUrl = "https://sige.utsh.edu.mx/estudiantes/login.php";
+      const params = new URLSearchParams();
+      params.append("txtUsuario", matricula.trim());
+      params.append("txtClave", password);
+
+      console.log(`🔐 Autenticando matrícula ${matricula} en el portal SIGE oficial...`);
+
+      const response = await fetch(loginUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        },
+        body: params.toString(),
+        redirect: "manual",
+      });
+
+      // Extraer cookies de sesión de los encabezados de respuesta
+      let rawCookies = "";
+      if (typeof response.headers.getSetCookie === "function") {
+        rawCookies = response.headers.getSetCookie().join("; ");
+      } else {
+        rawCookies = response.headers.get("set-cookie") || "";
+      }
+
+      const cookieMatch = rawCookies.match(/PHPSESSID=([^;]+)/);
+      const phpsessid = cookieMatch ? cookieMatch[1] : null;
+      const location = response.headers.get("location") || "";
+
+      console.log(
+        `📋 Respuesta login SIGE: Status ${response.status}, Location: "${location}", Cookie capturada: ${Boolean(phpsessid)}`,
+      );
+
+      // Si redirige con código de error (ej: fIndex.php?err=100) o no hay cookie
+      if (location.includes("err=") || !phpsessid) {
+        return {
+          success: false,
+          error: "Matrícula o contraseña incorrecta en el portal SIGE.",
+        };
+      }
+
+      // Validar que la sesión sea operativa con el portal
+      const client = new SigeClient(phpsessid);
+      const sesionValida = await client.verificarSesion();
+      if (!sesionValida) {
+        return {
+          success: false,
+          error: "No se pudo validar la sesión creada por el portal SIGE. Intenta nuevamente.",
+        };
+      }
+
+      console.log("✅ Autenticación exitosa en el portal SIGE. PHPSESSID obtenido.");
+      return {
+        success: true,
+        phpsessid,
+      };
+    } catch (error) {
+      console.error("❌ Error en autenticación con SIGE:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "No se pudo conectar con el portal oficial del SIGE.",
+      };
+    }
   }
 
   /**
@@ -666,8 +751,17 @@ export class SigeClient {
         "interfacesNME/ajx/datosAlumno.php",
       );
 
-      // Si no hay redirección al login y hay contenido, la sesión es válida
-      return html.length > 100 && !html.includes("login");
+      // Si el portal responde con el mensaje de no registrado o redirección
+      if (!html || html.length < 50) return false;
+      if (html.includes("solo para usuarios registrados")) return false;
+      if (html.includes("fIndex.php") || html.includes("login.php")) return false;
+
+      // Verificar que contenga estructura real de datos del estudiante
+      return (
+        html.includes("Matricula") ||
+        html.includes("Nombre") ||
+        html.includes("<table")
+      );
     } catch (error) {
       return false;
     }
@@ -736,10 +830,13 @@ export class SigeSessionManager {
 // Instancia global del gestor de sesiones
 export const sessionManager = new SigeSessionManager();
 
-// Limpiar sesiones expiradas cada 5 minutos
-setInterval(
+// Limpiar sesiones expiradas cada 5 minutos (con unref para evitar bloquear el event loop)
+const cleanupInterval = setInterval(
   () => {
     sessionManager.cleanExpiredSessions();
   },
   5 * 60 * 1000,
 );
+if (typeof cleanupInterval.unref === "function") {
+  cleanupInterval.unref();
+}

@@ -3,6 +3,66 @@ import { test, expect } from "@playwright/test";
 const baseURL = process.env.BASE_URL || "http://localhost:4321";
 
 test.describe("API Testing - Critical Flows", () => {
+  test.describe("POST /api/auth/sige-login", () => {
+    test("debe retornar error 400 sin matrícula o contraseña", async ({ request }) => {
+      const response = await request.post(`${baseURL}/api/auth/sige-login`, {
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({
+          matricula: "",
+          password: "",
+        }),
+      });
+
+      expect(response.status()).toBe(400);
+      const body = await response.json();
+      expect(body.error).toBeDefined();
+    });
+
+    test("debe retornar 401 para credenciales inválidas", async ({ request }) => {
+      const response = await request.post(`${baseURL}/api/auth/sige-login`, {
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({
+          matricula: "00000000",
+          password: "password_invalido_prueba",
+        }),
+      });
+
+      expect(response.status()).toBe(401);
+      const body = await response.json();
+      expect(body.error).toBeDefined();
+    });
+  });
+
+  test.describe("POST /api/auth/login", () => {
+    test("debe retornar error 400 sin matrícula o contraseña", async ({ request }) => {
+      const response = await request.post(`${baseURL}/api/auth/login`, {
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({
+          matricula: "",
+          password: "",
+        }),
+      });
+
+      expect(response.status()).toBe(400);
+      const body = await response.json();
+      expect(body.error).toBeDefined();
+    });
+
+    test("debe retornar 401 para credenciales inválidas", async ({ request }) => {
+      const response = await request.post(`${baseURL}/api/auth/login`, {
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({
+          matricula: "00000000",
+          password: "password_invalido_prueba",
+        }),
+      });
+
+      expect(response.status()).toBe(401);
+      const body = await response.json();
+      expect(body.error).toBeDefined();
+    });
+  });
+
   test.describe("POST /api/sige/extract-data", () => {
     test("debe retornar error 400 sin phpsessid", async ({ request }) => {
       const response = await request.post(`${baseURL}/api/sige/extract-data`, {

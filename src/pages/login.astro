@@ -1,20 +1,12 @@
 ---
-
+import Layout from "../layouts/Layout.astro";
+import LoginForm from "../components/LoginForm.astro";
 ---
 
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="0; url=/sige-login" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Redirigiendo...</title>
-    <script is:inline>
-      window.location.replace("/sige-login");
-    </script>
-  </head>
-  <body>
-    <p>Redirigiendo al inicio de sesión...</p>
-  </body>
-</html>
----
+<Layout title="UTSH - Iniciar Sesión en SIGE+">
+  <main
+    class="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 via-emerald-50/20 to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4 flex items-center justify-center"
+  >
+    <LoginForm />
+  </main>
+</Layout>
